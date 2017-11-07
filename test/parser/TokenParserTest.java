@@ -4,13 +4,14 @@ import command.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
 public class TokenParserTest {
     @Test
-    void parseEnableWateringCommand() {
+    void parseEnableWateringCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ПідключитиПолив: (7-10, 12, 15)," +
                 " 2017-11-01 10:10, 00:30, 1, 2, 30-40;").get(0);
@@ -31,7 +32,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseShowWateringCommand() {
+    void parseShowWateringCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ПоказатиПолив: 1;").get(0);
 
@@ -44,7 +45,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseStopWateringCommand() {
+    void parseStopWateringCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗупинитиПолив: 1;").get(0);
 
@@ -57,7 +58,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseResumeWateringCommand() {
+    void parseResumeWateringCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ВідновитиПолив: 1;").get(0);
 
@@ -70,7 +71,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseChangeWateringCommand() {
+    void parseChangeWateringCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗмінитиПолив: 1," +
                 " 2017-01-01 01:00, 00:01, 1, 2, 10-20;").get(0);
@@ -91,7 +92,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseChangeWateringCommandWithOmittedParams() {
+    void parseChangeWateringCommandWithOmittedParams() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗмінитиПолив: 1," +
                 " , 00:05, , , 5-10;").get(0);
@@ -111,7 +112,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseSetSensorPeriodicityCommand() {
+    void parseSetSensorPeriodicityCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗадатиПеріодичністьДатчиків: 1, 00:10;").get(0);
 
@@ -125,7 +126,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseShowHumidityCommand() {
+    void parseShowHumidityCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ПоказатиРівеньВологості: 1;").get(0);
 
@@ -138,7 +139,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseEnableFertilizingCommand() {
+    void parseEnableFertilizingCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ПідключитиУдобрювання: 1, 5;").get(0);
 
@@ -152,7 +153,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseShowFertilizingCommand() {
+    void parseShowFertilizingCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ПоказатиУдобрювання: 1;").get(0);
 
@@ -165,7 +166,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseChangeFertilizingCommand() {
+    void parseChangeFertilizingCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗмінитиУдобрювання: 1, 7;").get(0);
 
@@ -179,7 +180,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseStopFertilizingCommand() {
+    void parseStopFertilizingCommand() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         Command command = parser.parse("ЗупинитиУдобрювання: 1;").get(0);
 
@@ -192,7 +193,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseMultipleCommands() {
+    void parseMultipleCommands() throws ParseException {
         TokenParser parser = new TokenParser(new Lexer());
         List<Command> list = parser.parse("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
                 "ПоказатиПолив: (7, 9);\nЗупинитиПолив: 5;");
@@ -211,5 +212,33 @@ public class TokenParserTest {
         Assertions.assertTrue(third instanceof StopWatering);
         StopWatering stopWatering = (StopWatering) third;
         Assertions.assertArrayEquals(new int[]{5}, stopWatering.getZones());
+    }
+
+    @Test
+    void throwErrorOnUnknownCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("Command: 1;"));
+    }
+
+    @Test
+    void throwErrorOnWrongParamsAmount() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1, 2, 3;"));
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: ;"));
+    }
+
+    @Test
+    void throwErrorOnWrongParamsType() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1-2;"));
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 10:20;"));
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: string;"));
+    }
+
+    @Test
+    void throwErrorOnIncorrectSyntax() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив 1;"));
+        Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1"));
     }
 }

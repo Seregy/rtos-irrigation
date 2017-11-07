@@ -3,11 +3,12 @@ package parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.text.ParseException;
 import java.util.*;
 
 public class LexerTest {
     @Test
-    void tokenizeOneCommand() {
+    void tokenizeOneCommand() throws ParseException {
         Lexer lexer = new Lexer();
         List<Token> tokens = lexer.tokenize("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 30, 1, 2, 30-40;");
 
@@ -51,7 +52,7 @@ public class LexerTest {
     }
 
     @Test
-    void tokenizeMultipleCommands() {
+    void tokenizeMultipleCommands() throws ParseException {
         Lexer lexer = new Lexer();
         List<Token> tokens = lexer.tokenize("ПоказатиПолив: 1;\nЗадатиПеріодичністьДатчиків: 1, 00:10;\n" +
                 "ПоказатиРівеньВологості: (1-5, 7);");
@@ -85,5 +86,12 @@ public class LexerTest {
         expected.add(new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
 
         Assertions.assertEquals(expected, tokens);
+    }
+
+    @Test
+    void throwErrorOnUnknownSymbol() throws Exception {
+        Lexer lexer = new Lexer();
+        Assertions.assertThrows(ParseException.class, () -> {
+            lexer.tokenize("String ?");});
     }
 }

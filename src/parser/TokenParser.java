@@ -2,11 +2,12 @@ package parser;
 
 import command.*;
 import core.Utils;
+import core.Utils.SupplierWithParseException;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,7 +20,7 @@ public class TokenParser implements Parser {
     }
 
     @Override
-    public List<Command> parse(String input) {
+    public List<Command> parse(String input) throws ParseException {
         List<Command> commands = new ArrayList<>();
         List<Token> tokens = lexer.tokenize(input);
         iterator = tokens.listIterator();
@@ -29,7 +30,7 @@ public class TokenParser implements Parser {
         return commands;
     }
 
-    private Command parseCommand() {
+    private Command parseCommand() throws ParseException {
         Token commandToken = expectAndReturn(TokenType.STRING);
         expect(TokenType.COLON_SEPARATOR);
 
@@ -114,7 +115,7 @@ public class TokenParser implements Parser {
                 command = new StopFertilizing(zones);
                 break;
             default:
-                throw new RuntimeException("Unknown command: " + commandToken.getValue());
+                throw new ParseException("Unknown command: " + commandToken.getValue(), iterator.previousIndex() + 1);
 
         }
         expect(TokenType.SEMICOLON_SEPARATOR);
@@ -122,12 +123,12 @@ public class TokenParser implements Parser {
         return command;
     }
 
-    private int consumeInt() {
+    private int consumeInt() throws ParseException {
         Token token = expectAndReturn(TokenType.INTEGER_NUMBER);
         return Integer.parseInt(token.getValue());
     }
 
-    private int[] consumeIntGroup() {
+    private int[] consumeIntGroup() throws ParseException {
         List<Integer> integers = new ArrayList<>();
 
         expect(TokenType.OPEN_BRACKET);
@@ -153,7 +154,7 @@ public class TokenParser implements Parser {
         return integers.stream().mapToInt(i->i).toArray();
     }
 
-    private int[] consumeIntOrIntGroup() {
+    private int[] consumeIntOrIntGroup() throws ParseException {
         if (Utils.peek(iterator).getType() == TokenType.INTEGER_NUMBER) {
             return new int[] {consumeInt()};
         }
@@ -161,7 +162,7 @@ public class TokenParser implements Parser {
         return consumeIntGroup();
     }
 
-    private Map.Entry<Integer, Integer> consumeIntRange() {
+    private Map.Entry<Integer, Integer> consumeIntRange() throws ParseException {
         Token firstNumeric = expectAndReturn(TokenType.INTEGER_NUMBER);
         int first = Integer.parseInt(firstNumeric.getValue());
 
@@ -173,7 +174,7 @@ public class TokenParser implements Parser {
         return new AbstractMap.SimpleImmutableEntry<>(first, second);
     }
 
-    private LocalDateTime consumeDateTime() {
+    private LocalDateTime consumeDateTime() throws ParseException {
         Token year = expectAndReturn(TokenType.INTEGER_NUMBER);
         expect(TokenType.HYPHEN_SEPARATOR);
         Token month = expectAndReturn(TokenType.INTEGER_NUMBER);
@@ -190,7 +191,7 @@ public class TokenParser implements Parser {
                 Integer.parseInt(minute.getValue()));
     }
 
-    private LocalTime consumeTime() {
+    private LocalTime consumeTime() throws ParseException {
         Token hour = expectAndReturn(TokenType.INTEGER_NUMBER);
         expect(TokenType.COLON_SEPARATOR);
         Token minute = expectAndReturn(TokenType.INTEGER_NUMBER);
@@ -199,19 +200,25 @@ public class TokenParser implements Parser {
                 Integer.parseInt(minute.getValue()));
     }
 
-    private void expect(TokenType type) {
+    private void expect(TokenType type) throws ParseException {
         expectAndReturn(type);
     }
 
-    private Token expectAndReturn(TokenType type) {
-        Token token = iterator.next();
+    private Token expectAndReturn(TokenType type) throws ParseException {
+        Token token;
+        try {
+            token = iterator.next();
+        } catch (NoSuchElementException nsee) {
+            throw new ParseException("Couldn't find token type: " + type, iterator.previousIndex());
+        }
         if (token.getType() != type) {
-            throw new RuntimeException("Wrong token type: " + token.getType());
+            throw new ParseException("Wrong token type: " + token.getType(), iterator.previousIndex() + 1);
         }
         return token;
     }
 
-    private <T> Optional<T> consumeOptional(Supplier<T> supplier, TokenType expectedType) {
+    private <T> Optional<T> consumeOptional(SupplierWithParseException<T> supplier, TokenType expectedType)
+            throws ParseException {
         Optional<T> value = Optional.empty();
         if (Utils.peek(iterator).getType() == expectedType) {
             value = Optional.of(supplier.get());

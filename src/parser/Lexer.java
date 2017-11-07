@@ -1,15 +1,16 @@
 package parser;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
 public class Lexer {
-    public List<Token> tokenize(String string) {
+    public List<Token> tokenize(String string) throws ParseException {
         List<Token> tokens = new ArrayList<>();
         String str = string;
-        boolean matched = false;
         while (!str.isEmpty()) {
+            boolean matched = false;
             for (TokenType type : TokenType.values()) {
                 Matcher matcher = type.getPattern().matcher(str);
                 if (matcher.find()) {
@@ -24,10 +25,10 @@ public class Lexer {
                     break;
                 }
             }
-        }
 
-        if (!matched) {
-            throw new RuntimeException("Unexpected character: " + string);
+            if (!matched) {
+                throw new ParseException("Unexpected character: " + str, string.indexOf(str));
+            }
         }
 
         return tokens;

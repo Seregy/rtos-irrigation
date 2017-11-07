@@ -103,7 +103,7 @@ public class TokenParser implements Parser {
                 break;
             case ChangeFertilizing.NAME:
                 zones = consumeIntOrIntGroup();
-                fertilizerVolume = consumeOptional(this::consumeInt, TokenType.INTEGER_NUMBER).orElse(null);
+                fertilizerVolume = consumeInt();
                 command = new ChangeFertilizing(zones, fertilizerVolume);
                 break;
             case StopFertilizing.NAME:

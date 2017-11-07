@@ -85,6 +85,7 @@ public class TokenParser implements Parser {
                 break;
             case SetSensorPeriodicity.NAME:
                 zones = consumeIntOrIntGroup();
+                expect(TokenType.COMMA_SEPARATOR);
                 sensorInterval = consumeTime();
                 command = new SetSensorPeriodicity(zones, sensorInterval);
                 break;
@@ -94,6 +95,7 @@ public class TokenParser implements Parser {
                 break;
             case EnableFertilizing.NAME:
                 zones = consumeIntOrIntGroup();
+                expect(TokenType.COMMA_SEPARATOR);
                 fertilizerVolume = consumeInt();
                 command = new EnableFertilizing(zones, fertilizerVolume);
                 break;
@@ -103,6 +105,7 @@ public class TokenParser implements Parser {
                 break;
             case ChangeFertilizing.NAME:
                 zones = consumeIntOrIntGroup();
+                expect(TokenType.COMMA_SEPARATOR);
                 fertilizerVolume = consumeInt();
                 command = new ChangeFertilizing(zones, fertilizerVolume);
                 break;

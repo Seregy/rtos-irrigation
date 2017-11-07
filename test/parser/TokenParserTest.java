@@ -1,10 +1,8 @@
 package parser;
 
+import command.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import command.Command;
-import command.EnableWatering;
-import command.ShowWatering;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,8 +12,8 @@ public class TokenParserTest {
     @Test
     void parseEnableWateringCommand() {
         TokenParser parser = new TokenParser(new Lexer());
-        List<Command> list = parser.parse("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;");
-        Command command = list.get(0);
+        Command command = parser.parse("ПідключитиПолив: (7-10, 12, 15)," +
+                " 2017-11-01 10:10, 00:30, 1, 2, 30-40;").get(0);
 
         Assertions.assertTrue(command instanceof EnableWatering);
         Assertions.assertEquals(command.getName(), "ПідключитиПолив");
@@ -33,10 +31,171 @@ public class TokenParserTest {
     }
 
     @Test
+    void parseShowWateringCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ПоказатиПолив: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof ShowWatering);
+        Assertions.assertEquals(command.getName(), "ПоказатиПолив");
+
+        ShowWatering showWatering = (ShowWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, showWatering.getZones());
+    }
+
+    @Test
+    void parseStopWateringCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗупинитиПолив: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof StopWatering);
+        Assertions.assertEquals(command.getName(), "ЗупинитиПолив");
+
+        StopWatering stopWatering = (StopWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, stopWatering.getZones());
+    }
+
+    @Test
+    void parseResumeWateringCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ВідновитиПолив: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof ResumeWatering);
+        Assertions.assertEquals(command.getName(), "ВідновитиПолив");
+
+        ResumeWatering resumeWatering = (ResumeWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, resumeWatering.getZones());
+    }
+
+    @Test
+    void parseChangeWateringCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗмінитиПолив: 1," +
+                " 2017-01-01 01:00, 00:01, 1, 2, 10-20;").get(0);
+
+        Assertions.assertTrue(command instanceof ChangeWatering);
+        Assertions.assertEquals(command.getName(), "ЗмінитиПолив");
+
+        ChangeWatering changeWatering = (ChangeWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, changeWatering.getZones());
+        Assertions.assertEquals(LocalDateTime.of(2017, 1, 1, 1, 0),
+                changeWatering.getFirstWatering());
+        Assertions.assertEquals(LocalTime.of(0,1), changeWatering.getWateringInterval());
+        Assertions.assertEquals(Integer.valueOf(1), changeWatering.getWaterVolume());
+        Assertions.assertEquals(Integer.valueOf(2), changeWatering.getWateringDuration());
+        Map.Entry<Integer, Integer> range = new AbstractMap.SimpleImmutableEntry<>(10, 20);
+        Assertions.assertEquals(range, changeWatering.getHumidityRange());
+    }
+
+    @Test
+    void parseChangeWateringCommandWithOmittedParams() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗмінитиПолив: 1," +
+                " , 00:05, , , 5-10;").get(0);
+
+        Assertions.assertTrue(command instanceof ChangeWatering);
+        Assertions.assertEquals(command.getName(), "ЗмінитиПолив");
+
+        ChangeWatering changeWatering = (ChangeWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, changeWatering.getZones());
+        Assertions.assertNull(changeWatering.getFirstWatering());
+        Assertions.assertEquals(LocalTime.of(0,5), changeWatering.getWateringInterval());
+        Assertions.assertNull(changeWatering.getWaterVolume());
+        Assertions.assertNull(changeWatering.getWateringDuration());
+        Map.Entry<Integer, Integer> range = new AbstractMap.SimpleImmutableEntry<>(5, 10);
+        Assertions.assertEquals(range, changeWatering.getHumidityRange());
+    }
+
+    @Test
+    void parseSetSensorPeriodicityCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗадатиПеріодичністьДатчиків: 1, 00:10;").get(0);
+
+        Assertions.assertTrue(command instanceof SetSensorPeriodicity);
+        Assertions.assertEquals(command.getName(), "ЗадатиПеріодичністьДатчиків");
+
+        SetSensorPeriodicity setSensorPeriodicity = (SetSensorPeriodicity) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, setSensorPeriodicity.getZones());
+        Assertions.assertEquals(LocalTime.of(0, 10), setSensorPeriodicity.getCheckInterval());
+    }
+
+    @Test
+    void parseShowHumidityCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ПоказатиРівеньВологості: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof ShowHumidity);
+        Assertions.assertEquals(command.getName(), "ПоказатиРівеньВологості");
+
+        ShowHumidity showHumidity = (ShowHumidity) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, showHumidity.getZones());
+    }
+
+    @Test
+    void parseEnableFertilizingCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ПідключитиУдобрювання: 1, 5;").get(0);
+
+        Assertions.assertTrue(command instanceof EnableFertilizing);
+        Assertions.assertEquals(command.getName(), "ПідключитиУдобрювання");
+
+        EnableFertilizing enableFertilizing = (EnableFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, enableFertilizing.getZones());
+        Assertions.assertEquals(5, enableFertilizing.getFertilizerVolume());
+    }
+
+    @Test
+    void parseShowFertilizingCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ПоказатиУдобрювання: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof ShowFertilizing);
+        Assertions.assertEquals(command.getName(), "ПоказатиУдобрювання");
+
+        ShowFertilizing showFertilizing = (ShowFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, showFertilizing.getZones());
+    }
+
+    @Test
+    void parseChangeFertilizingCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗмінитиУдобрювання: 1, 7;").get(0);
+
+        Assertions.assertTrue(command instanceof ChangeFertilizing);
+        Assertions.assertEquals(command.getName(), "ЗмінитиУдобрювання");
+
+        ChangeFertilizing changeFertilizing = (ChangeFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, changeFertilizing.getZones());
+        Assertions.assertEquals(7, changeFertilizing.getFertilizerVolume());
+    }
+
+    @Test
+    void parseStopFertilizingCommand() {
+        TokenParser parser = new TokenParser(new Lexer());
+        Command command = parser.parse("ЗупинитиУдобрювання: 1;").get(0);
+
+        Assertions.assertTrue(command instanceof StopFertilizing);
+        Assertions.assertEquals(command.getName(), "ЗупинитиУдобрювання");
+
+        StopFertilizing stopFertilizing = (StopFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, stopFertilizing.getZones());
+    }
+
+    @Test
     void parseMultipleCommands() {
         TokenParser parser = new TokenParser(new Lexer());
         List<Command> list = parser.parse("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
-                "ПоказатиПолив: (7, 9);");
+                "ПоказатиПолив: (7, 9);\nЗупинитиПолив: 5;");
 
         Command first = list.get(0);
         Assertions.assertTrue(first instanceof EnableWatering);
@@ -47,5 +206,10 @@ public class TokenParserTest {
         Assertions.assertTrue(second instanceof ShowWatering);
         ShowWatering showWatering = (ShowWatering) second;
         Assertions.assertArrayEquals(new int[]{7, 9}, showWatering.getZones());
+
+        Command third = list.get(2);
+        Assertions.assertTrue(third instanceof StopWatering);
+        StopWatering stopWatering = (StopWatering) third;
+        Assertions.assertArrayEquals(new int[]{5}, stopWatering.getZones());
     }
 }

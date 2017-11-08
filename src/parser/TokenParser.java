@@ -132,11 +132,11 @@ public class TokenParser implements Parser {
         List<Integer> integers = new ArrayList<>();
 
         expect(TokenType.OPEN_BRACKET);
-        Token current = Utils.peek(iterator);
-        while (current.getType() != TokenType.CLOSE_BRACKET) {
-            if (current.getType() == TokenType.INTEGER_NUMBER) {
+        TokenType nextTokenType = peekType();
+        while (nextTokenType != TokenType.CLOSE_BRACKET) {
+            if (nextTokenType == TokenType.INTEGER_NUMBER) {
                 integers.add(consumeInt());
-            } else if (current.getType() == TokenType.HYPHEN_SEPARATOR) {
+            } else if (nextTokenType == TokenType.HYPHEN_SEPARATOR) {
                 integers.remove(integers.size() - 1);
                 iterator.previous();
                 Map.Entry<Integer, Integer> range = consumeIntRange();
@@ -147,7 +147,7 @@ public class TokenParser implements Parser {
             } else {
                 expect(TokenType.COMMA_SEPARATOR);
             }
-            current = Utils.peek(iterator);
+            nextTokenType = peekType();
         }
         expect(TokenType.CLOSE_BRACKET);
 
@@ -155,7 +155,7 @@ public class TokenParser implements Parser {
     }
 
     private int[] consumeIntOrIntGroup() throws ParseException {
-        if (Utils.peek(iterator).getType() == TokenType.INTEGER_NUMBER) {
+        if (peekType() == TokenType.INTEGER_NUMBER) {
             return new int[] {consumeInt()};
         }
 
@@ -220,10 +220,14 @@ public class TokenParser implements Parser {
     private <T> Optional<T> consumeOptional(SupplierWithParseException<T> supplier, TokenType expectedType)
             throws ParseException {
         Optional<T> value = Optional.empty();
-        if (Utils.peek(iterator).getType() == expectedType) {
+        if (peekType() == expectedType) {
             value = Optional.of(supplier.get());
         }
 
         return value;
+    }
+
+    private TokenType peekType() {
+        return Utils.peek(iterator).getType();
     }
 }

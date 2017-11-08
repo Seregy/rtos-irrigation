@@ -1,7 +1,7 @@
 package core;
 
 import command.Command;
-import parser.Lexer;
+import parser.RegexLexer;
 import parser.TokenParser;
 
 import java.io.*;
@@ -25,7 +25,7 @@ public class App {
             }
 
             String result = sb.toString();
-            List<Command> commands = new TokenParser(new Lexer()).parse(result);
+            List<Command> commands = new TokenParser(new RegexLexer()).parse(result);
             for (Command command : commands) {
                 System.out.println(command.getName());
             }

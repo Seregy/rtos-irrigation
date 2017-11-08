@@ -12,7 +12,7 @@ import java.util.*;
 public class TokenParserTest {
     @Test
     void parseEnableWateringCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ПідключитиПолив: (7-10, 12, 15)," +
                 " 2017-11-01 10:10, 00:30, 1, 2, 30-40;").get(0);
 
@@ -33,7 +33,7 @@ public class TokenParserTest {
 
     @Test
     void parseShowWateringCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ПоказатиПолив: 1;").get(0);
 
         Assertions.assertTrue(command instanceof ShowWatering);
@@ -46,7 +46,7 @@ public class TokenParserTest {
 
     @Test
     void parseStopWateringCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗупинитиПолив: 1;").get(0);
 
         Assertions.assertTrue(command instanceof StopWatering);
@@ -59,7 +59,7 @@ public class TokenParserTest {
 
     @Test
     void parseResumeWateringCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ВідновитиПолив: 1;").get(0);
 
         Assertions.assertTrue(command instanceof ResumeWatering);
@@ -72,7 +72,7 @@ public class TokenParserTest {
 
     @Test
     void parseChangeWateringCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗмінитиПолив: 1," +
                 " 2017-01-01 01:00, 00:01, 1, 2, 10-20;").get(0);
 
@@ -93,7 +93,7 @@ public class TokenParserTest {
 
     @Test
     void parseChangeWateringCommandWithOmittedParams() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗмінитиПолив: 1," +
                 " , 00:05, , , 5-10;").get(0);
 
@@ -113,7 +113,7 @@ public class TokenParserTest {
 
     @Test
     void parseSetSensorPeriodicityCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗадатиПеріодичністьДатчиків: 1, 00:10;").get(0);
 
         Assertions.assertTrue(command instanceof SetSensorPeriodicity);
@@ -127,7 +127,7 @@ public class TokenParserTest {
 
     @Test
     void parseShowHumidityCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ПоказатиРівеньВологості: 1;").get(0);
 
         Assertions.assertTrue(command instanceof ShowHumidity);
@@ -140,7 +140,7 @@ public class TokenParserTest {
 
     @Test
     void parseEnableFertilizingCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ПідключитиУдобрювання: 1, 5;").get(0);
 
         Assertions.assertTrue(command instanceof EnableFertilizing);
@@ -154,7 +154,7 @@ public class TokenParserTest {
 
     @Test
     void parseShowFertilizingCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ПоказатиУдобрювання: 1;").get(0);
 
         Assertions.assertTrue(command instanceof ShowFertilizing);
@@ -167,7 +167,7 @@ public class TokenParserTest {
 
     @Test
     void parseChangeFertilizingCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗмінитиУдобрювання: 1, 7;").get(0);
 
         Assertions.assertTrue(command instanceof ChangeFertilizing);
@@ -181,7 +181,7 @@ public class TokenParserTest {
 
     @Test
     void parseStopFertilizingCommand() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Command command = parser.parse("ЗупинитиУдобрювання: 1;").get(0);
 
         Assertions.assertTrue(command instanceof StopFertilizing);
@@ -194,7 +194,7 @@ public class TokenParserTest {
 
     @Test
     void parseMultipleCommands() throws ParseException {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         List<Command> list = parser.parse("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
                 "ПоказатиПолив: (7, 9);\nЗупинитиПолив: 5;");
 
@@ -216,20 +216,20 @@ public class TokenParserTest {
 
     @Test
     void throwErrorOnUnknownCommand() {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Assertions.assertThrows(ParseException.class, () -> parser.parse("Command: 1;"));
     }
 
     @Test
     void throwErrorOnWrongParamsAmount() {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1, 2, 3;"));
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: ;"));
     }
 
     @Test
     void throwErrorOnWrongParamsType() {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1-2;"));
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 10:20;"));
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: string;"));
@@ -237,7 +237,7 @@ public class TokenParserTest {
 
     @Test
     void throwErrorOnIncorrectSyntax() {
-        TokenParser parser = new TokenParser(new Lexer());
+        TokenParser parser = new TokenParser(new RegexLexer());
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив 1;"));
         Assertions.assertThrows(ParseException.class, () -> parser.parse("ПоказатиПолив: 1"));
     }

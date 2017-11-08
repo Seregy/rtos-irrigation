@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import java.text.ParseException;
 import java.util.*;
 
-public class LexerTest {
+public class RegexLexerTest {
     @Test
     void tokenizeOneCommand() throws ParseException {
-        Lexer lexer = new Lexer();
+        RegexLexer lexer = new RegexLexer();
         List<Token> tokens = lexer.tokenize("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 30, 1, 2, 30-40;");
 
         Assertions.assertEquals(31, tokens.size());
@@ -53,7 +53,7 @@ public class LexerTest {
 
     @Test
     void tokenizeMultipleCommands() throws ParseException {
-        Lexer lexer = new Lexer();
+        RegexLexer lexer = new RegexLexer();
         List<Token> tokens = lexer.tokenize("ПоказатиПолив: 1;\nЗадатиПеріодичністьДатчиків: 1, 00:10;\n" +
                 "ПоказатиРівеньВологості: (1-5, 7);");
 
@@ -90,7 +90,7 @@ public class LexerTest {
 
     @Test
     void throwErrorOnUnknownSymbol() throws Exception {
-        Lexer lexer = new Lexer();
+        RegexLexer lexer = new RegexLexer();
         Assertions.assertThrows(ParseException.class, () -> {
             lexer.tokenize("String ?");});
     }

@@ -12,8 +12,9 @@ public class Zone {
     private LocalTime wateringInterval;
     private int waterVolume;
     private int wateringDuration;
-    private Map.Entry<Integer, Integer> humidityBoundaries;
-    private LocalTime sensorsCheckPeriodicity;
+    private Map.Entry<Integer, Integer> humidityRange;
+
+    private LocalTime sensorsCheckInterval;
 
     private FertilizingStatus fertilizingStatus;
     private int fertilizerVolume;
@@ -66,20 +67,20 @@ public class Zone {
         this.wateringDuration = wateringDuration;
     }
 
-    public Map.Entry<Integer, Integer> getHumidityBoundaries() {
-        return humidityBoundaries;
+    public Map.Entry<Integer, Integer> getHumidityRange() {
+        return humidityRange;
     }
 
-    public void setHumidityBoundaries(Map.Entry<Integer, Integer> humidityBoundaries) {
-        this.humidityBoundaries = humidityBoundaries;
+    public void setHumidityRange(Map.Entry<Integer, Integer> humidityRange) {
+        this.humidityRange = humidityRange;
     }
 
-    public LocalTime getSensorsCheckPeriodicity() {
-        return sensorsCheckPeriodicity;
+    public LocalTime getSensorsCheckInterval() {
+        return sensorsCheckInterval;
     }
 
-    public void setSensorsCheckPeriodicity(LocalTime sensorsCheckPeriodicity) {
-        this.sensorsCheckPeriodicity = sensorsCheckPeriodicity;
+    public void setSensorsCheckInterval(LocalTime sensorsCheckInterval) {
+        this.sensorsCheckInterval = sensorsCheckInterval;
     }
 
     public FertilizingStatus getFertilizingStatus() {

@@ -10,7 +10,20 @@ import java.util.List;
 import java.util.Scanner;
 
 public class App {
+    private ZoneDAO zoneDAO;
+    private Lexer lexer;
+    private Parser parser;
+    public App() {
+        zoneDAO = new ZoneDAOLocal();
+        lexer = new RegexLexer();
+        parser = new TokenParser(lexer);
+
+        for (int i = 1; i < 16; i++) {
+            zoneDAO.add(new Zone(i));
+        }
+    }
     public static void main(String... args) {
+        App app = new App();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter path of the file to be parsed:");
         String path = scanner.nextLine();
@@ -25,7 +38,7 @@ public class App {
             }
 
             String result = sb.toString();
-            List<Command> commands = new TokenParser(new RegexLexer()).parse(result);
+            Collection<Command> commands = app.parser.parse(result);
             for (Command command : commands) {
                 System.out.println(command.getName());
             }

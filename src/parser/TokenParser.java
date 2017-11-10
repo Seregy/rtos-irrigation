@@ -212,7 +212,7 @@ public class TokenParser implements Parser {
             throw new ParseException("Couldn't find token type: " + type, iterator.previousIndex());
         }
         if (token.getType() != type) {
-            throw new ParseException("Wrong token type: " + token.getType(), iterator.previousIndex() + 1);
+            throw new ParseException("Wrong token type: " + token.getType() + ", expected " + type, iterator.previousIndex() + 1);
         }
         return token;
     }

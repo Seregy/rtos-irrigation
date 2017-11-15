@@ -14,39 +14,37 @@ public class RegexLexerTest {
 
         Assertions.assertEquals(31, tokens.size());
 
-        List<Token> expected = new ArrayList<>();
-
-        expected.add(new Token(TokenType.STRING, "ПідключитиПолив"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.OPEN_BRACKET, "("));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "7"));
-        expected.add(new Token(TokenType.HYPHEN_SEPARATOR, "-"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "10"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "12"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "15"));
-        expected.add(new Token(TokenType.CLOSE_BRACKET, ")"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "2017"));
-        expected.add(new Token(TokenType.HYPHEN_SEPARATOR, "-"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "11"));
-        expected.add(new Token(TokenType.HYPHEN_SEPARATOR, "-"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "01"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "10"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "10"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "30"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "1"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "2"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "30"));
-        expected.add(new Token(TokenType.HYPHEN_SEPARATOR, "-"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "40"));
-        expected.add(new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+        List<Token> expected = Arrays.asList(new Token(TokenType.STRING, "ПідключитиПолив"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.OPEN_BRACKET, "("),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "12"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "15"),
+                new Token(TokenType.CLOSE_BRACKET, ")"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2017"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "11"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "01"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "40"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
 
         Assertions.assertEquals(expected, tokens);
     }
@@ -59,31 +57,28 @@ public class RegexLexerTest {
 
         Assertions.assertEquals(22, tokens.size());
 
-        List<Token> expected = new ArrayList<>();
-        expected.add(new Token(TokenType.STRING, "ПоказатиПолив"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "1"));
-        expected.add(new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
-
-        expected.add(new Token(TokenType.STRING, "ЗадатиПеріодичністьДатчиків"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "1"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "00"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "10"));
-        expected.add(new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
-
-        expected.add(new Token(TokenType.STRING, "ПоказатиРівеньВологості"));
-        expected.add(new Token(TokenType.COLON_SEPARATOR, ":"));
-        expected.add(new Token(TokenType.OPEN_BRACKET, "("));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "1"));
-        expected.add(new Token(TokenType.HYPHEN_SEPARATOR, "-"));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "5"));
-        expected.add(new Token(TokenType.COMMA_SEPARATOR, ","));
-        expected.add(new Token(TokenType.INTEGER_NUMBER, "7"));
-        expected.add(new Token(TokenType.CLOSE_BRACKET, ")"));
-        expected.add(new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+        List<Token> expected = Arrays.asList(new Token(TokenType.STRING, "ПоказатиПолив"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"),
+                new Token(TokenType.STRING, "ЗадатиПеріодичністьДатчиків"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "00"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"),
+                new Token(TokenType.STRING, "ПоказатиРівеньВологості"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.OPEN_BRACKET, "("),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "5"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.CLOSE_BRACKET, ")"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
 
         Assertions.assertEquals(expected, tokens);
     }

@@ -128,6 +128,7 @@ public class App {
             }
 
             zone.setWateringStatus(WateringStatus.DISABLED);
+            zoneDAO.update(zone);
             zoneTimers.get(zoneId).cancel();
             consoleUI.print("Stop watering zone " + zoneId, ConsoleUI.ANSI_RED);
         }
@@ -141,6 +142,7 @@ public class App {
             }
 
             zone.setWateringStatus(WateringStatus.ENABLED);
+            zoneDAO.update(zone);
             setTimerForZone(zone);
             consoleUI.print("Resuming watering zone " + zoneId, ConsoleUI.ANSI_CYAN);
         }

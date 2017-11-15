@@ -17,14 +17,15 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class App {
+    private static final int AMOUNT_OF_ZONES = 15;
+
     private ZoneDAO zoneDAO;
-    private Lexer lexer;
     private Parser parser;
     private HashMap<Integer, Timer> zoneTimers = new HashMap<>();
     private ConsoleUI consoleUI = new ConsoleUI();
 
     public static void main(String... args) {
-        App app = new App();
+        App app = new App(new ZoneDAOLocal(), new TokenParser(new RegexLexer()));
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter path of the file to be parsed:");
         String path = scanner.nextLine();
@@ -54,13 +55,19 @@ public class App {
         }
     }
 
-    public App() {
-        zoneDAO = new ZoneDAOLocal();
-        lexer = new RegexLexer();
-        parser = new TokenParser(lexer);
+    public App(ZoneDAO zoneDAO, Parser parser) {
+        this.zoneDAO = zoneDAO;
+        this.parser = parser;
 
-        for (int i = 1; i < 16; i++) {
+        for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
             zoneDAO.add(new Zone(i));
+        }
+    }
+
+    public void handleCommands(String input) throws ParseException {
+        Collection<Command> commands = parser.parse(input);
+        for (Command command : commands) {
+            handleCommand(command);
         }
     }
 

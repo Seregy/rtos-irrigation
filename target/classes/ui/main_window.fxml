@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainWindow">
+   <children>
+      <TextField fx:id="commandField" layoutX="14.0" layoutY="361.0" prefHeight="25.0" prefWidth="450.0" />
+      <Button fx:id="commandButton" layoutX="484.0" layoutY="361.0" mnemonicParsing="false" onAction="#handleSendCommand" prefHeight="25.0" prefWidth="98.0" text="Send" />
+      <TextArea fx:id="textArea" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="321.0" prefWidth="568.0" />
+   </children>
+</AnchorPane>

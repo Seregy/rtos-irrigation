@@ -1,14 +1,17 @@
 package core;
 
 import command.*;
-import parser.Lexer;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import parser.Parser;
 import parser.RegexLexer;
 import parser.TokenParser;
-import ui.ConsoleUI;
+import ui.MainWindow;
 import zone.*;
 
-import java.io.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,43 +19,20 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class App {
+public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
 
     private ZoneDAO zoneDAO;
     private Parser parser;
     private HashMap<Integer, Timer> zoneTimers = new HashMap<>();
-    private ConsoleUI consoleUI = new ConsoleUI();
+    private MainWindow mainWindowController;
 
     public static void main(String... args) {
-        App app = new App(new ZoneDAOLocal(), new TokenParser(new RegexLexer()));
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter path of the file to be parsed:");
-        String path = scanner.nextLine();
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path),
-                "UTF-16"))) {
-            StringBuilder sb = new StringBuilder();
-            String line = reader.readLine();
+        Application.launch();
+    }
 
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = reader.readLine();
-            }
-
-            String result = sb.toString();
-            Collection<Command> commands = app.parser.parse(result);
-
-            for (Command command : commands) {
-                app.handleCommand(command);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public App() {
+        this(new ZoneDAOLocal(), new TokenParser(new RegexLexer()));
     }
 
     public App(ZoneDAO zoneDAO, Parser parser) {
@@ -62,6 +42,20 @@ public class App {
         for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
             zoneDAO.add(new Zone(i));
         }
+    }
+
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main_window.fxml"));
+        Parent root = loader.load();
+        mainWindowController = loader.getController();
+        mainWindowController.setApp(this);
+
+        Scene scene = new Scene(root, 600, 400);
+        primaryStage.setTitle("Irrigation");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public void handleCommands(String input) throws ParseException {
@@ -84,19 +78,19 @@ public class App {
             zoneDAO.update(zone);
 
             setTimerForZone(zone);
-            consoleUI.print("Enable watering zone " + zoneId, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print("Enable watering zone " + zoneId);
         }
     }
 
     private void setTimerForZone(Zone zone) {
         int zoneId = zone.getId();
-        Timer timer = new Timer(false);
+        Timer timer = new Timer(true);
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                consoleUI.print("Watering zone " + zoneId, ConsoleUI.ANSI_BLUE);
+                mainWindowController.print("Watering zone " + zoneId);
                 if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
-                    consoleUI.print("Fertilizing zone " + zoneId, ConsoleUI.ANSI_GREEN);
+                    mainWindowController.print("Fertilizing zone " + zoneId);
                 }
             }
         };
@@ -123,7 +117,7 @@ public class App {
             }
             data += String.format(", sensors' check interval - %s", zone.getSensorsCheckInterval());
 
-            consoleUI.print(data, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print(data);
         }
     }
 
@@ -137,7 +131,7 @@ public class App {
             zone.setWateringStatus(WateringStatus.DISABLED);
             zoneDAO.update(zone);
             zoneTimers.get(zoneId).cancel();
-            consoleUI.print("Stop watering zone " + zoneId, ConsoleUI.ANSI_RED);
+            mainWindowController.print("Stop watering zone " + zoneId);
         }
     }
 
@@ -151,7 +145,7 @@ public class App {
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
             setTimerForZone(zone);
-            consoleUI.print("Resuming watering zone " + zoneId, ConsoleUI.ANSI_CYAN);
+            mainWindowController.print("Resuming watering zone " + zoneId);
         }
     }
 
@@ -188,7 +182,7 @@ public class App {
 
             zoneTimers.get(zoneId).cancel();
             setTimerForZone(zone);
-            consoleUI.print("Change watering zone " + zoneId, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print("Change watering zone " + zoneId);
         }
     }
 
@@ -199,7 +193,7 @@ public class App {
             zone.setSensorsCheckInterval(command.getCheckInterval());
             zoneDAO.update(zone);
 
-            consoleUI.print("Set sensor periodicity for zone " + zoneId, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print("Set sensor periodicity for zone " + zoneId);
         }
     }
 
@@ -214,7 +208,7 @@ public class App {
             int max = zone.getHumidityRange().getValue() + 1;
             String data = String.format("Zone %d: humidity - %d%%",
                     zoneId, ThreadLocalRandom.current().nextInt(min, max));
-            consoleUI.print(data, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print(data);
         }
     }
 
@@ -226,7 +220,7 @@ public class App {
             zone.setFertilizingStatus(FertilizingStatus.ENABLED);
             zoneDAO.update(zone);
 
-            consoleUI.print("Enable fertilizing zone " + zoneId, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print("Enable fertilizing zone " + zoneId);
         }
     }
 
@@ -236,7 +230,7 @@ public class App {
 
             String data = String.format("Zone %d: fertilizing enabled - %b, fertilizer volume - %dL",
                     zoneId, zone.getFertilizingStatus() == FertilizingStatus.ENABLED, zone.getFertilizerVolume());
-            consoleUI.print(data, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print(data);
         }
     }
 
@@ -247,7 +241,7 @@ public class App {
             zone.setFertilizerVolume(command.getFertilizerVolume());
             zoneDAO.update(zone);
 
-            consoleUI.print("Change fertilizing zone " + zoneId, ConsoleUI.ANSI_BLACK);
+            mainWindowController.print("Change fertilizing zone " + zoneId);
         }
     }
 
@@ -260,7 +254,7 @@ public class App {
             }
 
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
-            consoleUI.print("Stop fertilizing zone " + zoneId, ConsoleUI.ANSI_RED);
+            mainWindowController.print("Stop fertilizing zone " + zoneId);
         }
     }
 

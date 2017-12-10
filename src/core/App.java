@@ -2,9 +2,15 @@ package core;
 
 import command.*;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import parser.Parser;
 import parser.RegexLexer;
@@ -21,11 +27,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
+    private Circle [] zones = new Circle[AMOUNT_OF_ZONES];
 
     private ZoneDAO zoneDAO;
     private Parser parser;
     private HashMap<Integer, Timer> zoneTimers = new HashMap<>();
     private MainWindow mainWindowController;
+    private GridPane gp = new GridPane();
+    private Circle[][] circlesArray = new Circle[3][5];
 
     public static void main(String... args) {
         Application.launch();
@@ -44,15 +53,38 @@ public class App extends Application{
         }
     }
 
+    public static GridPane initZonesArray(Circle[][] circlesMatrix, GridPane pane) {
+        for(int i = 0; i < circlesMatrix.length; i++) {
+            ColumnConstraints column = new ColumnConstraints(90);
+            pane.getColumnConstraints().add(column);
+            for(int j = 0; j < circlesMatrix[i].length; j++) {
+                RowConstraints row = new RowConstraints(70);
+                pane.getRowConstraints().add(row);
+                circlesMatrix[i][j] = new Circle(20);
+                pane.add(circlesMatrix[i][j], i, j);
+            }
+        }
+        return pane;
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main_window.fxml"));
-        Parent root = loader.load();
+        AnchorPane root = loader.load();
+
         mainWindowController = loader.getController();
         mainWindowController.setApp(this);
 
-        Scene scene = new Scene(root, 600, 400);
+        gp.setLayoutX(14.0);
+        gp.setLayoutY(14.0);
+        gp.setPrefHeight(321.0);
+        gp.setPrefWidth(236.0);
+        GridPane newGridPane = initZonesArray(circlesArray, gp);
+
+
+        root.getChildren().add(newGridPane);
+        Scene scene = new Scene(root, 600, 500);
         primaryStage.setTitle("Irrigation");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -65,9 +97,116 @@ public class App extends Application{
         }
     }
 
+    public static void changeColorNodeByRowColumnIndex (final int row, final int column, GridPane gridPane, Paint color) {
+        ObservableList<Node> childrens = gridPane.getChildren();
+        Circle circle = null;
+        for (Node node : childrens) {
+            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+                circle = (Circle) node;
+                circle.setFill(color);
+                childrens.remove(node);
+                childrens.add(circle);
+                break;
+            }
+        }
+    }
+
+    public static void changeStrokeNodeByRowColumnIndex (final int row, final int column, GridPane gridPane, double width) {
+        ObservableList<Node> childrens = gridPane.getChildren();
+        Circle circle = null;
+        for (Node node : childrens) {
+            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+                circle = (Circle) node;
+                circle.setStroke(Color.ORANGE);
+                circle.setStrokeWidth(width);
+                childrens.remove(node);
+                childrens.add(circle);
+                break;
+            }
+        }
+    }
+
+
+
+    public static Map<String, Integer> getIndex(int zoneNumber) {
+        Map<String, Integer> map = new HashMap<>();
+
+        switch (zoneNumber) {
+            case 1:
+                map.put("row", 0);
+                map.put("column", 0);
+                break;
+            case 2:
+                map.put("row", 0);
+                map.put("column", 1);
+                break;
+            case 3:
+                map.put("row", 0);
+                map.put("column", 2);
+                break;
+            case 4:
+                map.put("row", 1);
+                map.put("column", 0);
+                break;
+            case 5:
+                map.put("row", 1);
+                map.put("column", 1);
+                break;
+            case 6:
+                map.put("row", 1);
+                map.put("column", 2);
+                break;
+            case 7:
+                map.put("row", 2);
+                map.put("column", 0);
+                break;
+            case 8:
+                map.put("row", 2);
+                map.put("column", 1);
+                break;
+            case 9:
+                map.put("row", 2);
+                map.put("column", 2);
+                break;
+            case 10:
+                map.put("row", 3);
+                map.put("column", 0);
+                break;
+            case 11:
+                map.put("row", 3);
+                map.put("column", 1);
+                break;
+            case 12:
+                map.put("row", 3);
+                map.put("column", 2);
+                break;
+            case 13:
+                map.put("row", 4);
+                map.put("column", 0);
+                break;
+            case 14:
+                map.put("row", 4);
+                map.put("column", 1);
+                break;
+            case 15:
+                map.put("row", 4);
+                map.put("column", 2);
+                break;
+        }
+
+        return map;
+    }
+
+
     private void enableWatering(EnableWatering command) {
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
+
+            // Get current index
+            Map<String, Integer> map = getIndex(zoneId);
+            // Change color
+            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
+
 
             zone.setFirstWatering(command.getFirstWatering());
             zone.setWateringInterval(command.getWateringInterval());
@@ -79,6 +218,7 @@ public class App extends Application{
 
             setTimerForZone(zone);
             mainWindowController.print("Enable watering zone " + zoneId);
+
         }
     }
 
@@ -124,15 +264,22 @@ public class App extends Application{
     private void stopWatering(StopWatering command) {
         for (int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
+
             if (zone.getWateringStatus() != WateringStatus.ENABLED) {
                 continue;
             }
+
+            // Get current index
+            Map<String, Integer> map = getIndex(zoneId);
+            // Change color
+            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.BLACK);
 
             zone.setWateringStatus(WateringStatus.DISABLED);
             zoneDAO.update(zone);
             zoneTimers.get(zoneId).cancel();
             mainWindowController.print("Stop watering zone " + zoneId);
         }
+
     }
 
     private void resumeWatering(ResumeWatering command) {
@@ -141,6 +288,11 @@ public class App extends Application{
             if (zone.getWateringStatus() != WateringStatus.DISABLED) {
                 continue;
             }
+
+            // Get current index
+            Map<String, Integer> map = getIndex(zoneId);
+            // Change color
+            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
 
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
@@ -216,6 +368,11 @@ public class App extends Application{
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
 
+            // Get current index
+            Map<String, Integer> map = getIndex(zoneId);
+            // Change color
+            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp,5.0);
+
             zone.setFertilizerVolume(command.getFertilizerVolume());
             zone.setFertilizingStatus(FertilizingStatus.ENABLED);
             zoneDAO.update(zone);
@@ -252,6 +409,11 @@ public class App extends Application{
             if (zone.getFertilizingStatus() != FertilizingStatus.ENABLED) {
                 continue;
             }
+
+            // Get current index
+            Map<String, Integer> map = getIndex(zoneId);
+            // Change color
+            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, 0);
 
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
             mainWindowController.print("Stop fertilizing zone " + zoneId);

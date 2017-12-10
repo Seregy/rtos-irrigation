@@ -1,0 +1,5 @@
+.grid{
+    -fx-border-width: 1;
+    -fx-border-color: #cccccc;
+    -fx-padding: 10 15;
+}

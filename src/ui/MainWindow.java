@@ -4,14 +4,19 @@ import core.App;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Circle;
 
 import java.text.ParseException;
 import java.time.LocalTime;
 
 public class MainWindow {
+    private Circle [][] zones = new Circle[3][5];
+
     private App app;
     @FXML
     private Button commandButton;
@@ -19,6 +24,8 @@ public class MainWindow {
     private TextField commandField;
     @FXML
     private TextArea textArea;
+    @FXML
+    private GridPane pane;
 
     public void handleSendCommand(ActionEvent actionEvent) {
         try {
@@ -38,4 +45,5 @@ public class MainWindow {
             textArea.appendText("[" + time.toString() + "] " + stringToPrint + System.lineSeparator());
         });
     }
+
 }

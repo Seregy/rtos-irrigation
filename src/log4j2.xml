@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="FileCommand">
+            <FileName>logs/commands.log</FileName>
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        <File name="FileInterrupt">
+            <FileName>logs/interrupts.log</FileName>
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        <File name="FileSensor">
+            <FileName>logs/sensors.log</FileName>
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="command" level="INFO">
+            <AppenderRef ref="FileCommand"/>
+        </Logger>
+        <Logger name="interrupt" level="INFO">
+            <AppenderRef ref="FileInterrupt"/>
+        </Logger>
+        <Logger name="sensor" level="INFO">
+            <AppenderRef ref="FileSensor"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

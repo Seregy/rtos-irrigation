@@ -16,6 +16,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 import java.time.LocalTime;
@@ -23,6 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainWindow {
+    private static final Logger interruptLogger = LogManager.getLogger("interrupt");
+    private static final Logger commandLogger = LogManager.getLogger("command");
+
     private App app;
     @FXML
     private Button commandButton;
@@ -39,6 +44,7 @@ public class MainWindow {
     protected void handleSendCommand(ActionEvent actionEvent) {
         try {
             app.handleCommands(commandField.getText());
+            commandLogger.info(commandField.getText());
         } catch (ParseException e) {
             Platform.runLater(() -> textArea.appendText(e.getMessage()));
         }
@@ -46,11 +52,13 @@ public class MainWindow {
 
     @FXML
     protected void handleStopCommand(ActionEvent actionEvent) {
+        interruptLogger.info("1");
         app.stopEverything();
     }
 
     @FXML
     protected void handleInvalidHumidityCommand(ActionEvent actionEvent){
+        interruptLogger.info("2");
         app.invalidHumidity();
     }
 

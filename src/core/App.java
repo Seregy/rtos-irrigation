@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import parser.Parser;
 import parser.RegexLexer;
 import parser.TokenParser;
@@ -22,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
+    private static final Logger sensorLogger = LogManager.getLogger("sensor");
 
     private ZoneDAO zoneDAO;
     private Parser parser;
@@ -128,7 +131,9 @@ public class App extends Application{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                mainWindowController.print(String.format("Zone %d: humidity - %d", zoneId, zone.getHumidityValue()));
+                int humidity = zone.getHumidityValue();
+                sensorLogger.info(zone.getId() + " " + humidity);
+                mainWindowController.print(String.format("Zone %d: humidity - %d", zoneId, humidity));
             }
         };
 

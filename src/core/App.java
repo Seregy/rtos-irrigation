@@ -84,7 +84,7 @@ public class App extends Application{
 
 
         root.getChildren().add(newGridPane);
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 725, 500);
         primaryStage.setTitle("Irrigation");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -418,6 +418,27 @@ public class App extends Application{
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
             mainWindowController.print("Stop fertilizing zone " + zoneId);
         }
+    }
+
+    public void stopEverything(){
+        for(int i : zoneTimers.keySet()){
+            stopZoneWork(i);
+        }
+
+        mainWindowController.print("System urgently stopped");
+    }
+
+    public void invalidHumidity(){
+        Zone zone = zoneDAO.find(7);
+        zone.setHumidityValue(50);
+        stopZoneWork(7);
+    }
+
+    private void stopZoneWork(int id) {
+        zoneTimers.get(id).cancel();
+        Map<String, Integer> map = getIndex(id);
+        changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.BLACK);
+        changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, 0);
     }
 
     private void handleCommand(Command command) {

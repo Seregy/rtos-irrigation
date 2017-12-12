@@ -58,22 +58,22 @@ public class MainWindow {
 
     @FXML
     protected void handleWaterShortageCommand(ActionEvent actionEvent){
-
+        app.waterShortage();
     }
 
     @FXML
     protected void handleFertilizerShortageCommand(ActionEvent actionEvent){
-
+        app.fertilizerShortage();
     }
 
     @FXML
     protected void handleWaterNoResponseCommand(ActionEvent actionEvent){
-
+        app.waterNoResponse();
     }
 
     @FXML
     protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
-
+        app.fertilizingNoResponse();
     }
 
     public void setApp(App app) {

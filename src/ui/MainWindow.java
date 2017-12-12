@@ -27,12 +27,23 @@ public class MainWindow {
     @FXML
     private GridPane pane;
 
-    public void handleSendCommand(ActionEvent actionEvent) {
+    @FXML
+    protected void handleSendCommand(ActionEvent actionEvent) {
         try {
             app.handleCommands(commandField.getText());
         } catch (ParseException e) {
             Platform.runLater(() -> textArea.appendText(e.getMessage()));
         }
+    }
+
+    @FXML
+    protected void handleStopCommand(ActionEvent actionEvent) {
+        app.stopEverything();
+    }
+
+    @FXML
+    protected void handleInvalidHumidityCommand(ActionEvent actionEvent){
+        app.invalidHumidity();
     }
 
     public void setApp(App app) {

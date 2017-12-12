@@ -3,6 +3,7 @@ package zone;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Zone {
     private int id;
@@ -13,6 +14,19 @@ public class Zone {
     private int waterVolume;
     private int wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
+
+    public int getHumidityValue() {
+        int min = humidityRange.getKey();
+        int max = humidityRange.getValue() + 1;
+        humidityValue = ThreadLocalRandom.current().nextInt(min, max);
+        return humidityValue;
+    }
+
+    public void setHumidityValue(int humidityValue) {
+        this.humidityValue = humidityValue;
+    }
+
+    private int humidityValue;
 
     private LocalTime sensorsCheckInterval;
 

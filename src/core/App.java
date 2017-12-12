@@ -25,7 +25,8 @@ public class App extends Application{
 
     private ZoneDAO zoneDAO;
     private Parser parser;
-    private HashMap<Integer, Timer> zoneTimers = new HashMap<>();
+    private HashMap<Integer, Timer> zoneWateringTimers = new HashMap<>();
+    private HashMap<Integer, Timer> zoneSensorsTimers = new HashMap<>();
     private MainWindow mainWindowController;
 
     public static void main(String... args) {
@@ -58,6 +59,10 @@ public class App extends Application{
         primaryStage.setTitle("Irrigation");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
+            setSensorsTimersForZone(zoneDAO.find(i));
+        }
     }
 
     public void handleCommands(String input) throws ParseException {
@@ -79,15 +84,16 @@ public class App extends Application{
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
 
-            setTimerForZone(zone);
+            setWateringTimersForZone(zone);
             mainWindowController.print("Enable watering zone " + zoneId);
 
         }
     }
 
-    private void setTimerForZone(Zone zone) {
+    private void setWateringTimersForZone(Zone zone) {
         int zoneId = zone.getId();
         Timer timer = new Timer(true);
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -112,7 +118,23 @@ public class App extends Application{
         timer.schedule(task,
                 Date.from(zone.getFirstWatering().atZone(ZoneId.systemDefault()).toInstant()),
                 zone.getWateringInterval().toNanoOfDay() / 1000000);
-        zoneTimers.put(zoneId, timer);
+        zoneWateringTimers.put(zoneId, timer);
+    }
+
+    private void setSensorsTimersForZone(Zone zone) {
+        int zoneId = zone.getId();
+        Timer timer = new Timer(true);
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                mainWindowController.print(String.format("Zone %d: humidity - %d", zoneId, zone.getHumidityValue()));
+            }
+        };
+
+        timer.schedule(task, Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
+                zone.getSensorsCheckInterval().toNanoOfDay() / 1000000);
+        zoneSensorsTimers.put(zoneId, timer);
     }
 
     private void showWatering(ShowWatering command) {
@@ -146,10 +168,9 @@ public class App extends Application{
 
             zone.setWateringStatus(WateringStatus.DISABLED);
             zoneDAO.update(zone);
-            zoneTimers.get(zoneId).cancel();
+            zoneWateringTimers.get(zoneId).cancel();
             mainWindowController.print("Stop watering zone " + zoneId);
         }
-
     }
 
     private void resumeWatering(ResumeWatering command) {
@@ -161,7 +182,7 @@ public class App extends Application{
 
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
-            setTimerForZone(zone);
+            setWateringTimersForZone(zone);
             mainWindowController.print("Resuming watering zone " + zoneId);
         }
     }
@@ -197,8 +218,8 @@ public class App extends Application{
 
             zoneDAO.update(zone);
 
-            zoneTimers.get(zoneId).cancel();
-            setTimerForZone(zone);
+            zoneWateringTimers.get(zoneId).cancel();
+            setWateringTimersForZone(zone);
             mainWindowController.print("Change watering zone " + zoneId);
         }
     }
@@ -209,6 +230,8 @@ public class App extends Application{
 
             zone.setSensorsCheckInterval(command.getCheckInterval());
             zoneDAO.update(zone);
+            zoneSensorsTimers.get(zoneId).cancel();
+            setSensorsTimersForZone(zone);
 
             mainWindowController.print("Set sensor periodicity for zone " + zoneId);
         }
@@ -276,7 +299,7 @@ public class App extends Application{
     }
 
     public void stopEverything(){
-        for(int i : zoneTimers.keySet()){
+        for(int i : zoneWateringTimers.keySet()){
             stopZoneWork(i);
         }
 
@@ -290,7 +313,7 @@ public class App extends Application{
     }
 
     private void stopZoneWork(int id) {
-        zoneTimers.get(id).cancel();
+        zoneWateringTimers.get(id).cancel();
         mainWindowController.changeZoneColor(id, Color.BLACK);
         mainWindowController.changeZoneBorderSize(id, 0);
     }

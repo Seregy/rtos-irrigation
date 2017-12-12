@@ -101,7 +101,7 @@ public class App extends Application{
         ObservableList<Node> childrens = gridPane.getChildren();
         Circle circle = null;
         for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 circle = (Circle) node;
                 circle.setFill(color);
                 childrens.remove(node);
@@ -115,7 +115,7 @@ public class App extends Application{
         ObservableList<Node> childrens = gridPane.getChildren();
         Circle circle = null;
         for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 circle = (Circle) node;
                 circle.setStroke(Color.ORANGE);
                 circle.setStrokeWidth(width);

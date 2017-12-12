@@ -15,17 +15,6 @@ public class Zone {
     private int wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
-    public int getHumidityValue() {
-        int min = humidityRange.getKey();
-        int max = humidityRange.getValue() + 1;
-        humidityValue = ThreadLocalRandom.current().nextInt(min, max);
-        return humidityValue;
-    }
-
-    public void setHumidityValue(int humidityValue) {
-        this.humidityValue = humidityValue;
-    }
-
     private int humidityValue;
 
     private LocalTime sensorsCheckInterval;
@@ -90,6 +79,26 @@ public class Zone {
 
     public void setHumidityRange(Map.Entry<Integer, Integer> humidityRange) {
         this.humidityRange = humidityRange;
+    }
+
+    public int getHumidityValue() {
+        int min;
+        int max;
+
+        if (humidityRange != null) {
+            min = humidityRange.getKey();
+            max = humidityRange.getValue() + 1;
+        } else {
+            min = 0;
+            max = 100;
+        }
+
+        humidityValue = ThreadLocalRandom.current().nextInt(min, max);
+        return humidityValue;
+    }
+
+    public void setHumidityValue(int humidityValue) {
+        this.humidityValue = humidityValue;
     }
 
     public LocalTime getSensorsCheckInterval() {

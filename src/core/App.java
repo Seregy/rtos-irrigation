@@ -2,6 +2,7 @@ package core;
 
 import command.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -164,10 +165,31 @@ public class App extends Application{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+                Map<String, Integer> map = getIndex(zoneId);
+                Platform.runLater(() -> {
+                    changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
+                });
                 mainWindowController.print("Watering zone " + zoneId);
+
                 if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
                     mainWindowController.print("Fertilizing zone " + zoneId);
+                    Platform.runLater(() -> {
+                        changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp,5.0);
+                    });
                 }
+
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Map<String, Integer> map = getIndex(zoneId);
+                        Platform.runLater(() -> {
+                            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.BLACK);
+                            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, 0);
+                        });
+
+                        mainWindowController.print("Watering zone stopped: " + zoneId);
+                    }
+                }, zone.getWateringDuration() * 60000);
             }
         };
         timer.schedule(task,

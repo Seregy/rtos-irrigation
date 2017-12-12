@@ -67,7 +67,6 @@ public class App extends Application{
         return pane;
     }
 
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main_window.fxml"));
@@ -81,7 +80,6 @@ public class App extends Application{
         gp.setPrefHeight(321.0);
         gp.setPrefWidth(236.0);
         GridPane newGridPane = initZonesArray(circlesArray, gp);
-
 
         root.getChildren().add(newGridPane);
         Scene scene = new Scene(root, 600, 500);
@@ -126,8 +124,6 @@ public class App extends Application{
         }
     }
 
-
-
     public static Map<String, Integer> getIndex(int zoneNumber) {
         int row = Math.floorDiv(zoneNumber - 1, 3);
         int column = (zoneNumber - 1) % 3;
@@ -139,7 +135,6 @@ public class App extends Application{
         return map;
     }
 
-
     private void enableWatering(EnableWatering command) {
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
@@ -148,7 +143,6 @@ public class App extends Application{
             Map<String, Integer> map = getIndex(zoneId);
             // Change color
             changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
-
 
             zone.setFirstWatering(command.getFirstWatering());
             zone.setWateringInterval(command.getWateringInterval());

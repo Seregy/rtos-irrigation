@@ -129,70 +129,12 @@ public class App extends Application{
 
 
     public static Map<String, Integer> getIndex(int zoneNumber) {
-        Map<String, Integer> map = new HashMap<>();
+        int row = Math.floorDiv(zoneNumber - 1, 3);
+        int column = (zoneNumber - 1) % 3;
 
-        switch (zoneNumber) {
-            case 1:
-                map.put("row", 0);
-                map.put("column", 0);
-                break;
-            case 2:
-                map.put("row", 0);
-                map.put("column", 1);
-                break;
-            case 3:
-                map.put("row", 0);
-                map.put("column", 2);
-                break;
-            case 4:
-                map.put("row", 1);
-                map.put("column", 0);
-                break;
-            case 5:
-                map.put("row", 1);
-                map.put("column", 1);
-                break;
-            case 6:
-                map.put("row", 1);
-                map.put("column", 2);
-                break;
-            case 7:
-                map.put("row", 2);
-                map.put("column", 0);
-                break;
-            case 8:
-                map.put("row", 2);
-                map.put("column", 1);
-                break;
-            case 9:
-                map.put("row", 2);
-                map.put("column", 2);
-                break;
-            case 10:
-                map.put("row", 3);
-                map.put("column", 0);
-                break;
-            case 11:
-                map.put("row", 3);
-                map.put("column", 1);
-                break;
-            case 12:
-                map.put("row", 3);
-                map.put("column", 2);
-                break;
-            case 13:
-                map.put("row", 4);
-                map.put("column", 0);
-                break;
-            case 14:
-                map.put("row", 4);
-                map.put("column", 1);
-                break;
-            case 15:
-                map.put("row", 4);
-                map.put("column", 2);
-                break;
-        }
+        Map<String, Integer> map = new HashMap<>();
+        map.put("row", row);
+        map.put("column", column);
 
         return map;
     }

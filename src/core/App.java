@@ -2,16 +2,10 @@ package core;
 
 import command.*;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import parser.Parser;
 import parser.RegexLexer;
@@ -28,7 +22,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
-    private Circle [] zones = new Circle[AMOUNT_OF_ZONES];
 
     private ZoneDAO zoneDAO;
     private Parser parser;
@@ -77,8 +70,6 @@ public class App extends Application{
     private void enableWatering(EnableWatering command) {
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
-
-            mainWindowController.changeZoneColor(zoneId, Color.GREEN);
 
             zone.setFirstWatering(command.getFirstWatering());
             zone.setWateringInterval(command.getWateringInterval());
@@ -153,8 +144,6 @@ public class App extends Application{
                 continue;
             }
 
-            mainWindowController.changeZoneColor(zoneId, Color.BLACK);
-
             zone.setWateringStatus(WateringStatus.DISABLED);
             zoneDAO.update(zone);
             zoneTimers.get(zoneId).cancel();
@@ -169,8 +158,6 @@ public class App extends Application{
             if (zone.getWateringStatus() != WateringStatus.DISABLED) {
                 continue;
             }
-
-            mainWindowController.changeZoneColor(zoneId, Color.GREEN);
 
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
@@ -246,8 +233,6 @@ public class App extends Application{
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
 
-            mainWindowController.changeZoneBorderSize(zoneId, 5.0);
-
             zone.setFertilizerVolume(command.getFertilizerVolume());
             zone.setFertilizingStatus(FertilizingStatus.ENABLED);
             zoneDAO.update(zone);
@@ -284,8 +269,6 @@ public class App extends Application{
             if (zone.getFertilizingStatus() != FertilizingStatus.ENABLED) {
                 continue;
             }
-
-            mainWindowController.changeZoneBorderSize(zoneId, 0);
 
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
             mainWindowController.print("Stop fertilizing zone " + zoneId);

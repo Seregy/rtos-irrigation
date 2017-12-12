@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainWindow {
-    private Circle [][] zones = new Circle[3][5];
-
     private App app;
     @FXML
     private Button commandButton;
@@ -143,5 +141,4 @@ public class MainWindow {
             }
         }
     }
-
 }

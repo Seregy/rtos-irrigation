@@ -56,6 +56,26 @@ public class MainWindow {
         app.invalidHumidity();
     }
 
+    @FXML
+    protected void handleWaterShortageCommand(ActionEvent actionEvent){
+
+    }
+
+    @FXML
+    protected void handleFertilizerShortageCommand(ActionEvent actionEvent){
+
+    }
+
+    @FXML
+    protected void handleWaterNoResponseCommand(ActionEvent actionEvent){
+
+    }
+
+    @FXML
+    protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
+
+    }
+
     public void setApp(App app) {
         this.app = app;
     }

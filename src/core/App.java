@@ -314,7 +314,7 @@ public class App extends Application{
     }
 
     public void waterShortage() {
-        for(int i : zoneTimers.keySet()){
+        for(int i : zoneWateringTimers.keySet()){
             stopZoneWork(i);
         }
         mainWindowController.print("Water shortage! Please refill the water tank");

@@ -46,7 +46,6 @@ public class MainWindow {
             app.handleCommands(commandField.getText());
             commandLogger.info(commandField.getText());
         } catch (ParseException e) {
-            Platform.runLater(() -> textArea.appendText(e.getMessage()));
         }
     }
 
@@ -64,21 +63,25 @@ public class MainWindow {
 
     @FXML
     protected void handleWaterShortageCommand(ActionEvent actionEvent){
+        interruptLogger.info("3");
         app.waterShortage();
     }
 
     @FXML
     protected void handleFertilizerShortageCommand(ActionEvent actionEvent){
+        interruptLogger.info("4");
         app.fertilizerShortage();
     }
 
     @FXML
     protected void handleWaterNoResponseCommand(ActionEvent actionEvent){
+        interruptLogger.info("5");
         app.waterNoResponse();
     }
 
     @FXML
     protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
+        interruptLogger.info("6");
         app.fertilizingNoResponse();
     }
 

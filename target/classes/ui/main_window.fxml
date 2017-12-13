@@ -19,10 +19,19 @@
     <Text layoutX="51.0" layoutY="433.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Watering zone" />
     <Circle fill="BLACK" layoutX="34.0" layoutY="458.0" radius="10.0" stroke="ORANGE" strokeType="INSIDE" strokeWidth="3.0" />
     <Text layoutX="51.0" layoutY="463.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Fertilizing zone" />
-      <Button fx:id="stopButton" layoutX="600.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleStopCommand" prefHeight="25.0" prefWidth="100.0" text="STOP!" textFill="RED" />
-      <Button fx:id="invalidHumidityButton" layoutX="600.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleInvalidHumidityCommand" prefHeight="25.0" prefWidth="100.0" text="Invalid Humidity">
+      <Button fx:id="stopButton" layoutX="600.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleStopCommand" prefHeight="25.0" prefWidth="118.0" text="STOP!" textFill="RED" />
+      <Button fx:id="invalidHumidityButton" layoutX="600.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleInvalidHumidityCommand" prefHeight="25.0" prefWidth="118.0" text="Invalid Humidity" />
+      <Button fx:id="waterShortageButton" layoutX="600.0" layoutY="110.0" mnemonicParsing="false" onAction="#handleWaterShortageCommand" prefHeight="25.0" prefWidth="118.0" text="Water Shortage" />
+      <Button fx:id="fertilizerShortageButton" layoutX="600.0" layoutY="150.0" mnemonicParsing="false" onAction="#handleFertilizerShortageCommand" prefHeight="25.0" prefWidth="118.0" text="Fertilizer Shortage" />
+      <Button fx:id="waterNoResponseButton" layoutX="600.0" layoutY="190.0" mnemonicParsing="false" onAction="#handleWaterNoResponseCommand" prefHeight="25.0" prefWidth="118.0" text="Water No Response">
+         <font>
+            <Font size="11.0" />
+         </font>
+      </Button>
+      <Button fx:id="fertilizerNoResponse" layoutX="600.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleFertilizerNoResponseCommand" prefHeight="25.0" prefWidth="118.0" text="Fertilizer No Response">
          <font>
             <Font size="10.0" />
-         </font></Button>
+         </font>
+      </Button>
   </children>
 </AnchorPane>

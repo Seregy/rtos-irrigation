@@ -15,25 +15,25 @@ public class Zone {
     private int wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
-    public boolean isWaterSensorFlag() {
-        return waterSensorFlag;
+    public boolean isWaterSensorNotResponding() {
+        return waterSensorNotResponding;
     }
 
-    public void setWaterSensorFlag(boolean waterSensorFlag) {
-        this.waterSensorFlag = waterSensorFlag;
+    public void setWaterSensorNotResponding(boolean waterSensorNotResponding) {
+        this.waterSensorNotResponding = waterSensorNotResponding;
     }
 
-    private boolean waterSensorFlag;
+    private boolean waterSensorNotResponding;
 
-    public boolean isFertizingSensorFlag() {
-        return fertizingSensorFlag;
+    public boolean isFertilizerSensorNotResponding() {
+        return fertilizerSensorNotResponding;
     }
 
-    public void setFertizingSensorFlag(boolean fertizingSensorFlag) {
-        this.fertizingSensorFlag = fertizingSensorFlag;
+    public void setFertilizerSensorNotResponding(boolean fertilizerSensorNotResponding) {
+        this.fertilizerSensorNotResponding = fertilizerSensorNotResponding;
     }
 
-    private boolean fertizingSensorFlag;
+    private boolean fertilizerSensorNotResponding;
 
     private int humidityValue;
 

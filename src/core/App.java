@@ -100,12 +100,12 @@ public class App extends Application{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if(zone.isWaterSensorFlag()) mainWindowController.print("Zone " + zoneId + "'s water sensor is not responding! Please check it!");
+                if(zone.isWaterSensorNotResponding()) mainWindowController.print("Zone " + zoneId + "'s water sensor is not responding! Please check it!");
                 mainWindowController.print("Watering zone " + zoneId);
                 mainWindowController.changeZoneColor(zoneId, Color.GREEN);
 
                 if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
-                    if(zone.isFertizingSensorFlag()) mainWindowController.print("Zone " + zoneId + "'s fertilizing sensor is not responding! Please check it!");
+                    if(zone.isFertilizerSensorNotResponding()) mainWindowController.print("Zone " + zoneId + "'s fertilizing sensor is not responding! Please check it!");
                     mainWindowController.print("Fertilizing zone " + zoneId);
                     mainWindowController.changeZoneBorderSize(zoneId, 5.0);
                 }
@@ -305,9 +305,9 @@ public class App extends Application{
         }
     }
 
-    public void stopEverything(){
+    public void resetAllZones(){
         for(int i : zoneWateringTimers.keySet()){
-            stopZoneWork(i);
+            resetZoneState(i);
         }
 
         for(Timer sensorsTimer : zoneSensorsTimers.values()) {
@@ -319,7 +319,7 @@ public class App extends Application{
 
     public void waterShortage() {
         for(int i : zoneWateringTimers.keySet()){
-            stopZoneWork(i);
+            resetZoneState(i);
         }
         mainWindowController.print("Water shortage! Please refill the water tank");
     }
@@ -336,10 +336,10 @@ public class App extends Application{
     public void invalidHumidity(){
         Zone zone = zoneDAO.find(7);
         zone.setHumidityValue(50);
-        stopZoneWork(7);
+        resetZoneState(7);
     }
 
-    private void stopZoneWork(int id) {
+    private void resetZoneState(int id) {
         zoneWateringTimers.get(id).cancel();
         mainWindowController.changeZoneColor(id, Color.BLACK);
         mainWindowController.changeZoneBorderSize(id, 0);
@@ -383,11 +383,11 @@ public class App extends Application{
         }
     }
 
-    public void waterNoResponse() {
-        zoneDAO.find(9).setWaterSensorFlag(true);
+    public void waterSensorNotResponding() {
+        zoneDAO.find(9).setWaterSensorNotResponding(true);
     }
 
-    public void fertilizingNoResponse() {
-        zoneDAO.find(9).setFertizingSensorFlag(true);
+    public void fertilizerSensorNotResponding() {
+        zoneDAO.find(9).setFertilizerSensorNotResponding(true);
     }
 }

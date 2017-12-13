@@ -56,7 +56,7 @@ public class MainWindow {
     @FXML
     protected void handleStopCommand(ActionEvent actionEvent) {
         interruptLogger.info("1");
-        app.stopEverything();
+        app.resetAllZones();
     }
 
     @FXML
@@ -80,13 +80,13 @@ public class MainWindow {
     @FXML
     protected void handleWaterNoResponseCommand(ActionEvent actionEvent){
         interruptLogger.info("5");
-        app.waterNoResponse();
+        app.waterSensorNotResponding();
     }
 
     @FXML
     protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
         interruptLogger.info("6");
-        app.fertilizingNoResponse();
+        app.fertilizerSensorNotResponding();
     }
 
     public void setApp(App app) {

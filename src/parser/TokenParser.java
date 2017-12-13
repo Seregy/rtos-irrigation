@@ -226,7 +226,11 @@ public class TokenParser implements Parser {
         return value;
     }
 
-    private TokenType peekType() {
-        return Utils.peek(iterator).getType();
+    private TokenType peekType() throws ParseException {
+        try {
+            return Utils.peek(iterator).getType();
+        } catch (NoSuchElementException nsee) {
+            throw new ParseException("Couldn't find next token", iterator.nextIndex());
+        }
     }
 }

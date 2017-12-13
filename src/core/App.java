@@ -310,6 +310,10 @@ public class App extends Application{
             stopZoneWork(i);
         }
 
+        for(Timer sensorsTimer : zoneSensorsTimers.values()) {
+            sensorsTimer.cancel();
+        }
+
         mainWindowController.print("System urgently stopped");
     }
 

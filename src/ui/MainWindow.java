@@ -112,16 +112,12 @@ public class MainWindow {
 
     public void changeZoneColor(int zoneId, Color color) {
         Map<String, Integer> map = getIndex(zoneId);
-        Platform.runLater(() -> {
-            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), color);
-        });
+        Platform.runLater(() -> changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), color));
     }
 
     public void changeZoneBorderSize(int zoneId, double size) {
         Map<String, Integer> map = getIndex(zoneId);
-        Platform.runLater(() -> {
-            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), size);
-        });
+        Platform.runLater(() -> changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), size));
     }
 
     private void initZonesArray(Circle[][] circlesMatrix) {

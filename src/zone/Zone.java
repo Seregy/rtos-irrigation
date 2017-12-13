@@ -15,23 +15,7 @@ public class Zone {
     private int wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
-    public boolean isWaterSensorNotResponding() {
-        return waterSensorNotResponding;
-    }
-
-    public void setWaterSensorNotResponding(boolean waterSensorNotResponding) {
-        this.waterSensorNotResponding = waterSensorNotResponding;
-    }
-
     private boolean waterSensorNotResponding;
-
-    public boolean isFertilizerSensorNotResponding() {
-        return fertilizerSensorNotResponding;
-    }
-
-    public void setFertilizerSensorNotResponding(boolean fertilizerSensorNotResponding) {
-        this.fertilizerSensorNotResponding = fertilizerSensorNotResponding;
-    }
 
     private boolean fertilizerSensorNotResponding;
 
@@ -99,6 +83,22 @@ public class Zone {
 
     public void setHumidityRange(Map.Entry<Integer, Integer> humidityRange) {
         this.humidityRange = humidityRange;
+    }
+
+    public boolean isWaterSensorNotResponding() {
+        return waterSensorNotResponding;
+    }
+
+    public void setWaterSensorNotResponding(boolean waterSensorNotResponding) {
+        this.waterSensorNotResponding = waterSensorNotResponding;
+    }
+
+    public boolean isFertilizerSensorNotResponding() {
+        return fertilizerSensorNotResponding;
+    }
+
+    public void setFertilizerSensorNotResponding(boolean fertilizerSensorNotResponding) {
+        this.fertilizerSensorNotResponding = fertilizerSensorNotResponding;
     }
 
     public int getHumidityValue() {

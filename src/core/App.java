@@ -100,12 +100,18 @@ public class App extends Application{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if(zone.isWaterSensorNotResponding()) mainWindowController.print("Zone " + zoneId + "'s water sensor is not responding! Please check it!");
+                if(zone.isWaterSensorNotResponding()) {
+                    mainWindowController.print("Zone " + zoneId +
+                            "'s water sensor is not responding! Please check it!");
+                }
                 mainWindowController.print("Watering zone " + zoneId);
                 mainWindowController.changeZoneColor(zoneId, Color.GREEN);
 
                 if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
-                    if(zone.isFertilizerSensorNotResponding()) mainWindowController.print("Zone " + zoneId + "'s fertilizing sensor is not responding! Please check it!");
+                    if(zone.isFertilizerSensorNotResponding()) {
+                        mainWindowController.print("Zone " + zoneId +
+                                "'s fertilizing sensor is not responding! Please check it!");
+                    }
                     mainWindowController.print("Fertilizing zone " + zoneId);
                     mainWindowController.changeZoneBorderSize(zoneId, 5.0);
                 }

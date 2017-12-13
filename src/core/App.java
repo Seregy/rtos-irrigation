@@ -100,10 +100,12 @@ public class App extends Application{
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+                if(zone.isWaterSensorFlag()) mainWindowController.print("Zone " + zoneId + "'s water sensor is not responding! Please check it!");
                 mainWindowController.print("Watering zone " + zoneId);
                 mainWindowController.changeZoneColor(zoneId, Color.GREEN);
 
                 if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
+                    if(zone.isFertizingSensorFlag()) mainWindowController.print("Zone " + zoneId + "'s fertilizing sensor is not responding! Please check it!");
                     mainWindowController.print("Fertilizing zone " + zoneId);
                     mainWindowController.changeZoneBorderSize(zoneId, 5.0);
                 }
@@ -311,6 +313,22 @@ public class App extends Application{
         mainWindowController.print("System urgently stopped");
     }
 
+    public void waterShortage() {
+        for(int i : zoneTimers.keySet()){
+            stopZoneWork(i);
+        }
+        mainWindowController.print("Water shortage! Please refill the water tank");
+    }
+
+    public void fertilizerShortage() {
+        for(Zone zone : zoneDAO.findAll())
+        {
+            zone.setFertilizingStatus(FertilizingStatus.DISABLED);
+            mainWindowController.changeZoneBorderSize(zone.getId(), 0);
+        }
+        mainWindowController.print("Fertilizer shortage! Please refill the fertilizer tank");
+    }
+
     public void invalidHumidity(){
         Zone zone = zoneDAO.find(7);
         zone.setHumidityValue(50);
@@ -359,5 +377,13 @@ public class App extends Application{
                 stopFertilizing((StopFertilizing) command);
                 break;
         }
+    }
+
+    public void waterNoResponse() {
+        zoneDAO.find(9).setWaterSensorFlag(true);
+    }
+
+    public void fertilizingNoResponse() {
+        zoneDAO.find(9).setFertizingSensorFlag(true);
     }
 }

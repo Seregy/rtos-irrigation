@@ -15,6 +15,26 @@ public class Zone {
     private int wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
+    public boolean isWaterSensorFlag() {
+        return waterSensorFlag;
+    }
+
+    public void setWaterSensorFlag(boolean waterSensorFlag) {
+        this.waterSensorFlag = waterSensorFlag;
+    }
+
+    private boolean waterSensorFlag;
+
+    public boolean isFertizingSensorFlag() {
+        return fertizingSensorFlag;
+    }
+
+    public void setFertizingSensorFlag(boolean fertizingSensorFlag) {
+        this.fertizingSensorFlag = fertizingSensorFlag;
+    }
+
+    private boolean fertizingSensorFlag;
+
     private int humidityValue;
 
     private LocalTime sensorsCheckInterval;

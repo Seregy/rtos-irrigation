@@ -27,6 +27,7 @@ import java.util.Map;
 public class MainWindow {
     private static final Logger interruptLogger = LogManager.getLogger("interrupt");
     private static final Logger commandLogger = LogManager.getLogger("command");
+    private static final Logger generalLogger = LogManager.getLogger(MainWindow.class);
 
     private App app;
     @FXML
@@ -46,6 +47,8 @@ public class MainWindow {
             app.handleCommands(commandField.getText());
             commandLogger.info(commandField.getText());
         } catch (ParseException e) {
+            Platform.runLater(() -> textArea.appendText("Error: " + e.getMessage()));
+            generalLogger.error(e.getMessage());
         }
     }
 

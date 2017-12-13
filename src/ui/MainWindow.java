@@ -46,6 +46,7 @@ public class MainWindow {
         try {
             app.handleCommands(commandField.getText());
             commandLogger.info(commandField.getText());
+            commandField.clear();
         } catch (ParseException e) {
             Platform.runLater(() -> textArea.appendText("Error: " + e.getMessage()));
             generalLogger.error(e.getMessage());

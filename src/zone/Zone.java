@@ -12,7 +12,7 @@ public class Zone {
     private LocalDateTime firstWatering;
     private LocalTime wateringInterval;
     private int waterVolume;
-    private int wateringDuration;
+    private double wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
     private boolean waterSensorNotResponding;
@@ -69,11 +69,11 @@ public class Zone {
         this.waterVolume = waterVolume;
     }
 
-    public int getWateringDuration() {
+    public double getWateringDuration() {
         return wateringDuration;
     }
 
-    public void setWateringDuration(int wateringDuration) {
+    public void setWateringDuration(double wateringDuration) {
         this.wateringDuration = wateringDuration;
     }
 

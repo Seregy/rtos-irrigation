@@ -38,7 +38,7 @@ public class TokenParser implements Parser {
         LocalDateTime dateTime;
         LocalTime wateringInterval;
         Integer waterVolume;
-        Integer wateringDuration;
+        Double wateringDuration;
         LocalTime sensorInterval;
         Integer fertilizerVolume;
 
@@ -52,7 +52,7 @@ public class TokenParser implements Parser {
                 expect(TokenType.COMMA_SEPARATOR);
                 waterVolume = consumeInt();
                 expect(TokenType.COMMA_SEPARATOR);
-                wateringDuration = consumeInt();
+                wateringDuration = consumeDouble();
                 expect(TokenType.COMMA_SEPARATOR);
                 Map.Entry<Integer, Integer> humidity = consumeIntRange();
                 command = new EnableWatering(zones, dateTime, wateringInterval, waterVolume, wateringDuration, humidity);
@@ -78,7 +78,7 @@ public class TokenParser implements Parser {
                 expect(TokenType.COMMA_SEPARATOR);
                 waterVolume = consumeOptional(this::consumeInt, TokenType.INTEGER_NUMBER).orElse(null);
                 expect(TokenType.COMMA_SEPARATOR);
-                wateringDuration = consumeOptional(this::consumeInt, TokenType.INTEGER_NUMBER).orElse(null);
+                wateringDuration = consumeOptional(this::consumeDouble, TokenType.INTEGER_NUMBER).orElse(null);
                 expect(TokenType.COMMA_SEPARATOR);
                 humidity = consumeOptional(this::consumeIntRange, TokenType.INTEGER_NUMBER).orElse(null);
                 command = new ChangeWatering(zones, dateTime, wateringInterval, waterVolume, wateringDuration, humidity);
@@ -171,6 +171,19 @@ public class TokenParser implements Parser {
         int second = Integer.parseInt(secondNumeric.getValue());
 
         return new AbstractMap.SimpleImmutableEntry<>(first, second);
+    }
+
+    private double consumeDouble() throws ParseException {
+        Token integerPart = expectAndReturn(TokenType.INTEGER_NUMBER);
+        String value = integerPart.getValue();
+
+        if (peekType() == TokenType.DOT_SEPARATOR) {
+            expect(TokenType.DOT_SEPARATOR);
+            Token fractionalPart = expectAndReturn(TokenType.INTEGER_NUMBER);
+            value = value + "." + fractionalPart.getValue();
+        }
+
+        return Double.parseDouble(value);
     }
 
     private LocalDateTime consumeDateTime() throws ParseException {

@@ -10,9 +10,9 @@ public class RegexLexerTest {
     @Test
     void tokenizeOneCommand() throws ParseException {
         RegexLexer lexer = new RegexLexer();
-        List<Token> tokens = lexer.tokenize("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 30, 1, 2, 30-40;");
+        List<Token> tokens = lexer.tokenize("ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 30, 1, 1.5, 30-40;");
 
-        Assertions.assertEquals(31, tokens.size());
+        Assertions.assertEquals(33, tokens.size());
 
         List<Token> expected = Arrays.asList(new Token(TokenType.STRING, "ПідключитиПолив"),
                 new Token(TokenType.COLON_SEPARATOR, ":"),
@@ -39,7 +39,9 @@ public class RegexLexerTest {
                 new Token(TokenType.COMMA_SEPARATOR, ","),
                 new Token(TokenType.INTEGER_NUMBER, "1"),
                 new Token(TokenType.COMMA_SEPARATOR, ","),
-                new Token(TokenType.INTEGER_NUMBER, "2"),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.DOT_SEPARATOR, "."),
+                new Token(TokenType.INTEGER_NUMBER, "5"),
                 new Token(TokenType.COMMA_SEPARATOR, ","),
                 new Token(TokenType.INTEGER_NUMBER, "30"),
                 new Token(TokenType.HYPHEN_SEPARATOR, "-"),

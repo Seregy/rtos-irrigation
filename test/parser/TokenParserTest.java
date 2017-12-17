@@ -72,6 +72,49 @@ public class TokenParserTest {
     }
 
     @Test
+    void parseEnableWateringCommandWithDecimalDuration() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПідключитиПолив"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2017"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "11"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "01"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "00"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2"),
+                new Token(TokenType.DOT_SEPARATOR, "."),
+                new Token(TokenType.INTEGER_NUMBER, "2"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "40"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ПідключитиПолив: 1, 2017-11-01 10:10, 00:30, 1, 2.2, 30-40;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+
+        EnableWatering enableWatering = (EnableWatering) command;
+
+        Assertions.assertEquals(2.2, enableWatering.getWateringDuration());
+    }
+
+    @Test
     void parseChangeWateringCommandWithOmittedParams() throws ParseException {
         List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ЗмінитиПолив"),
                 new Token(TokenType.COLON_SEPARATOR, ":"),

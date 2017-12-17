@@ -116,6 +116,7 @@ public class App extends Application{
                     mainWindowController.changeZoneBorderSize(zoneId, 5.0);
                 }
 
+                int delay = (int) (zone.getWateringDuration() * 60000);
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
@@ -123,7 +124,7 @@ public class App extends Application{
                         mainWindowController.changeZoneColor(zoneId, Color.BLACK);
                         mainWindowController.changeZoneBorderSize(zoneId, 0);
                     }
-                }, zone.getWateringDuration() * 60000);
+                }, delay);
             }
         };
         timer.schedule(task,
@@ -219,7 +220,7 @@ public class App extends Application{
                 zone.setWaterVolume(waterVolume);
             }
 
-            Integer wateringDuration = command.getWateringDuration();
+            Double wateringDuration = command.getWateringDuration();
             if (wateringDuration != null) {
                 zone.setWateringDuration(wateringDuration);
             }

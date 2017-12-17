@@ -158,7 +158,7 @@ public class App extends Application{
                     zoneId, zone.getWateringStatus() == WateringStatus.ENABLED);
             if (zone.getWateringStatus() == WateringStatus.ENABLED) {
                 data = data + String.format(", first watering - %s, watering interval - %s," +
-                                " water volume - %dL, watering duration - %dm, humidity range - %d%%-%d%%",
+                                " water volume - %dL, watering duration - %fm, humidity range - %d%%-%d%%",
                         zone.getFirstWatering().toString(),
                         zone.getWateringInterval().toString(),
                         zone.getWaterVolume(),

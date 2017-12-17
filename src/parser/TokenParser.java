@@ -208,8 +208,16 @@ public class TokenParser implements Parser {
         expect(TokenType.COLON_SEPARATOR);
         Token minute = expectAndReturn(TokenType.INTEGER_NUMBER);
 
+        int second = 0;
+        if (peekType() == TokenType.COLON_SEPARATOR) {
+            expect(TokenType.COLON_SEPARATOR);
+            Token secondToken = expectAndReturn(TokenType.INTEGER_NUMBER);
+            second = Integer.parseInt(secondToken.getValue());
+        }
+
         return LocalTime.of(Integer.parseInt(hour.getValue()),
-                Integer.parseInt(minute.getValue()));
+                Integer.parseInt(minute.getValue()),
+                second);
     }
 
     private void expect(TokenType type) throws ParseException {

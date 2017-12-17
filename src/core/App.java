@@ -390,6 +390,10 @@ public class App extends Application{
         }
     }
 
+    public void setMainWindowController(MainWindow mainWindowController) {
+        this.mainWindowController = mainWindowController;
+    }
+
     public void waterSensorNotResponding() {
         zoneDAO.find(9).setWaterSensorNotResponding(true);
     }

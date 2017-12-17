@@ -28,7 +28,7 @@ public class Zone {
 
     public Zone(int id) {
         this.id = id;
-        sensorsCheckInterval = LocalTime.of(0, 5);
+        sensorsCheckInterval = LocalTime.of(0, 1);
         wateringStatus = WateringStatus.NOT_INITIALISED;
         fertilizingStatus = FertilizingStatus.NOT_INITIALISED;
     }

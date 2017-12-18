@@ -27,7 +27,7 @@ import java.util.Map;
 public class MainWindow {
     private static final Logger interruptLogger = LogManager.getLogger("interrupt");
     private static final Logger commandLogger = LogManager.getLogger("command");
-    private static final Logger generalLogger = LogManager.getLogger(MainWindow.class);
+    private static final Logger generalLogger = LogManager.getLogger("error");
 
     private App app;
     @FXML
@@ -48,7 +48,6 @@ public class MainWindow {
             commandLogger.info(commandField.getText());
             commandField.clear();
         } catch (ParseException e) {
-            Platform.runLater(() -> textArea.appendText("Error: " + e.getMessage()));
             generalLogger.error(e.getMessage());
         }
     }
@@ -108,6 +107,7 @@ public class MainWindow {
         pane.setPrefWidth(236.0);
         initZonesArray(circlesArray);
         rootPane.getChildren().add(pane);
+        TextAreaAppender.setTextArea(textArea);
     }
 
     public void changeZoneColor(int zoneId, Color color) {

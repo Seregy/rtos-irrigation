@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="INFO" packages="ui">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="FileCommand">
-            <FileName>logs/commands.log</FileName>
+        <File name="File">
+            <FileName>logs/general.log</FileName>
             <PatternLayout>
-                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
+                <Pattern>[%c{1}] [%d{dd-MM-yyyy HH:mm:ss}] %msg%n</Pattern>
             </PatternLayout>
         </File>
-        <File name="FileInterrupt">
-            <FileName>logs/interrupts.log</FileName>
+        <TextArea name="TextArea">
             <PatternLayout>
-                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
+                <Pattern>[%c{1}] [%d{dd-MM-yyyy HH:mm:ss}] %msg%n</Pattern>
             </PatternLayout>
-        </File>
-        <File name="FileSensor">
-            <FileName>logs/sensors.log</FileName>
-            <PatternLayout>
-                <Pattern>%d{dd-MM-yyyy HH:mm} %msg%n</Pattern>
-            </PatternLayout>
-        </File>
+        </TextArea>
     </Appenders>
     <Loggers>
         <Logger name="command" level="INFO">
-            <AppenderRef ref="FileCommand"/>
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="TextArea"/>
         </Logger>
         <Logger name="interrupt" level="INFO">
-            <AppenderRef ref="FileInterrupt"/>
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="TextArea"/>
         </Logger>
         <Logger name="sensor" level="INFO">
-            <AppenderRef ref="FileSensor"/>
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="error" level="error">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="TextArea"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="Console"/>

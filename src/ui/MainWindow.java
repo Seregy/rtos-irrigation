@@ -19,6 +19,9 @@ import javafx.scene.shape.Circle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -86,6 +89,30 @@ public class MainWindow {
     protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
         interruptLogger.info("6");
         app.fertilizerSensorNotResponding();
+    }
+
+    @FXML
+    protected void handleShowLogsCommand(ActionEvent actionEvent){
+        File pdfFile = new File("logs//general.log");
+        if (pdfFile.exists())
+        {
+            if (Desktop.isDesktopSupported())
+            {
+                try
+                {
+                    Desktop.getDesktop().open(pdfFile);
+                }
+                catch (IOException e)
+                {
+
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                System.out.println("Awt Desktop is not supported!");
+            }
+        }
     }
 
     public void setApp(App app) {

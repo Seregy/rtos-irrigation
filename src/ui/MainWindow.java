@@ -16,16 +16,18 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class MainWindow {
     private static final Logger interruptLogger = LogManager.getLogger("interrupt");
@@ -93,14 +95,14 @@ public class MainWindow {
 
     @FXML
     protected void handleShowLogsCommand(ActionEvent actionEvent){
-        File pdfFile = new File("logs//general.log");
-        if (pdfFile.exists())
+        File file = new File("logs//general.log");
+        if (file.exists())
         {
             if (Desktop.isDesktopSupported())
             {
                 try
                 {
-                    Desktop.getDesktop().open(pdfFile);
+                    Desktop.getDesktop().open(file);
                 }
                 catch (IOException e)
                 {
@@ -112,6 +114,33 @@ public class MainWindow {
             {
                 System.out.println("Awt Desktop is not supported!");
             }
+        }
+    }
+
+    @FXML
+    protected void handleLoadProgrammeCommand(ActionEvent actionEvent){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Programme File");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("txt", "*.txt")
+        );
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null) {
+            openFile(file);
+        }
+    }
+
+    private void openFile(File file){
+        try {
+            Scanner input = new Scanner(file);
+            while (input.hasNext()) {
+                app.handleCommands(input.nextLine());
+            }
+            input.close();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
         }
     }
 

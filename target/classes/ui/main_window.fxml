@@ -34,5 +34,10 @@
          </font>
       </Button>
       <Button layoutX="600.0" layoutY="413.0" mnemonicParsing="false" onAction="#handleShowLogsCommand" prefHeight="27.0" prefWidth="118.0" text="Show logs" />
+      <Button layoutX="600.0" layoutY="446.0" mnemonicParsing="false" onAction="#handleLoadProgrammeCommand" prefHeight="27.0" prefWidth="118.0" text="Load programme">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Button>
   </children>
 </AnchorPane>

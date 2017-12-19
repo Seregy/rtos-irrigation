@@ -227,6 +227,13 @@ public class MainWindow {
         }
     }
 
+    public void hideLines(int index){
+        Line[] lines = linesDictionary.get(index);
+        for (Line line: lines) {
+            line.setVisible(false);
+        }
+    }
+
     private static Map<String, Integer> getIndex(int zoneNumber) {
         int row = Math.floorDiv(zoneNumber - 1, 3);
         int column = (zoneNumber - 1) % 3;

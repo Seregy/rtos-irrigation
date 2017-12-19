@@ -38,7 +38,7 @@ public class TokenParser implements Parser {
         LocalDateTime dateTime;
         LocalTime wateringInterval;
         Integer waterVolume;
-        Integer wateringDuration;
+        Double wateringDuration;
         LocalTime sensorInterval;
         Integer fertilizerVolume;
 
@@ -52,7 +52,7 @@ public class TokenParser implements Parser {
                 expect(TokenType.COMMA_SEPARATOR);
                 waterVolume = consumeInt();
                 expect(TokenType.COMMA_SEPARATOR);
-                wateringDuration = consumeInt();
+                wateringDuration = consumeDouble();
                 expect(TokenType.COMMA_SEPARATOR);
                 Map.Entry<Integer, Integer> humidity = consumeIntRange();
                 command = new EnableWatering(zones, dateTime, wateringInterval, waterVolume, wateringDuration, humidity);
@@ -78,7 +78,7 @@ public class TokenParser implements Parser {
                 expect(TokenType.COMMA_SEPARATOR);
                 waterVolume = consumeOptional(this::consumeInt, TokenType.INTEGER_NUMBER).orElse(null);
                 expect(TokenType.COMMA_SEPARATOR);
-                wateringDuration = consumeOptional(this::consumeInt, TokenType.INTEGER_NUMBER).orElse(null);
+                wateringDuration = consumeOptional(this::consumeDouble, TokenType.INTEGER_NUMBER).orElse(null);
                 expect(TokenType.COMMA_SEPARATOR);
                 humidity = consumeOptional(this::consumeIntRange, TokenType.INTEGER_NUMBER).orElse(null);
                 command = new ChangeWatering(zones, dateTime, wateringInterval, waterVolume, wateringDuration, humidity);
@@ -173,6 +173,19 @@ public class TokenParser implements Parser {
         return new AbstractMap.SimpleImmutableEntry<>(first, second);
     }
 
+    private double consumeDouble() throws ParseException {
+        Token integerPart = expectAndReturn(TokenType.INTEGER_NUMBER);
+        String value = integerPart.getValue();
+
+        if (peekType() == TokenType.DOT_SEPARATOR) {
+            expect(TokenType.DOT_SEPARATOR);
+            Token fractionalPart = expectAndReturn(TokenType.INTEGER_NUMBER);
+            value = value + "." + fractionalPart.getValue();
+        }
+
+        return Double.parseDouble(value);
+    }
+
     private LocalDateTime consumeDateTime() throws ParseException {
         Token year = expectAndReturn(TokenType.INTEGER_NUMBER);
         expect(TokenType.HYPHEN_SEPARATOR);
@@ -195,8 +208,16 @@ public class TokenParser implements Parser {
         expect(TokenType.COLON_SEPARATOR);
         Token minute = expectAndReturn(TokenType.INTEGER_NUMBER);
 
+        int second = 0;
+        if (peekType() == TokenType.COLON_SEPARATOR) {
+            expect(TokenType.COLON_SEPARATOR);
+            Token secondToken = expectAndReturn(TokenType.INTEGER_NUMBER);
+            second = Integer.parseInt(secondToken.getValue());
+        }
+
         return LocalTime.of(Integer.parseInt(hour.getValue()),
-                Integer.parseInt(minute.getValue()));
+                Integer.parseInt(minute.getValue()),
+                second);
     }
 
     private void expect(TokenType type) throws ParseException {
@@ -226,7 +247,11 @@ public class TokenParser implements Parser {
         return value;
     }
 
-    private TokenType peekType() {
-        return Utils.peek(iterator).getType();
+    private TokenType peekType() throws ParseException {
+        try {
+            return Utils.peek(iterator).getType();
+        } catch (NoSuchElementException nsee) {
+            throw new ParseException("Couldn't find next token", iterator.nextIndex());
+        }
     }
 }

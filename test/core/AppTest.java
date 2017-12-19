@@ -7,6 +7,7 @@ import command.StopWatering;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import parser.Parser;
+import ui.MainWindow;
 import zone.Zone;
 import zone.ZoneDAO;
 
@@ -31,6 +32,7 @@ public class AppTest {
         when(mockedParser.parse(input)).thenReturn(commands);
 
         App app = new App(mockedDAO, mockedParser);
+        app.setMainWindowController(mock(MainWindow.class));
         app.handleCommands(input);
 
         verify(mockedDAO, times(6)).find(anyInt());
@@ -53,6 +55,7 @@ public class AppTest {
         when(mockedParser.parse(input)).thenReturn(commands);
 
         App app = new App(mockedDAO, mockedParser);
+        app.setMainWindowController(mock(MainWindow.class));
         app.handleCommands(input);
 
         verify(mockedDAO, times(9)).find(anyInt());

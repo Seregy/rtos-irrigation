@@ -9,14 +9,14 @@ public class ChangeWatering  extends BasicCommand {
     private LocalDateTime firstWatering;
     private LocalTime wateringInterval;
     private Integer waterVolume;
-    private Integer wateringDuration;
+    private Double wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
     public ChangeWatering(int[] zones,
                           LocalDateTime firstWatering,
                           LocalTime wateringInterval,
                           Integer waterVolume,
-                          Integer wateringDuration,
+                          Double wateringDuration,
                           Map.Entry<Integer, Integer> humidityRange) {
         super(zones);
         this.firstWatering = firstWatering;
@@ -38,7 +38,7 @@ public class ChangeWatering  extends BasicCommand {
         return waterVolume;
     }
 
-    public Integer getWateringDuration() {
+    public Double getWateringDuration() {
         return wateringDuration;
     }
 

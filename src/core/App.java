@@ -2,16 +2,13 @@ package core;
 
 import command.*;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import parser.Parser;
 import parser.RegexLexer;
 import parser.TokenParser;
@@ -27,14 +24,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
-    private Circle [] zones = new Circle[AMOUNT_OF_ZONES];
+    private static final Logger sensorLogger = LogManager.getLogger("sensor");
 
     private ZoneDAO zoneDAO;
     private Parser parser;
-    private HashMap<Integer, Timer> zoneTimers = new HashMap<>();
+    private HashMap<Integer, Timer> zoneWateringTimers = new HashMap<>();
+    private HashMap<Integer, Timer> zoneSensorsTimers = new HashMap<>();
     private MainWindow mainWindowController;
-    private GridPane gp = new GridPane();
-    private Circle[][] circlesArray = new Circle[3][5];
 
     public static void main(String... args) {
         Application.launch();
@@ -53,21 +49,6 @@ public class App extends Application{
         }
     }
 
-    public static GridPane initZonesArray(Circle[][] circlesMatrix, GridPane pane) {
-        for(int i = 0; i < circlesMatrix.length; i++) {
-            ColumnConstraints column = new ColumnConstraints(90);
-            pane.getColumnConstraints().add(column);
-            for(int j = 0; j < circlesMatrix[i].length; j++) {
-                RowConstraints row = new RowConstraints(70);
-                pane.getRowConstraints().add(row);
-                circlesMatrix[i][j] = new Circle(20);
-                pane.add(circlesMatrix[i][j], i, j);
-            }
-        }
-        return pane;
-    }
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main_window.fxml"));
@@ -75,19 +56,16 @@ public class App extends Application{
 
         mainWindowController = loader.getController();
         mainWindowController.setApp(this);
+        mainWindowController.initGridPane(root);
 
-        gp.setLayoutX(14.0);
-        gp.setLayoutY(14.0);
-        gp.setPrefHeight(321.0);
-        gp.setPrefWidth(236.0);
-        GridPane newGridPane = initZonesArray(circlesArray, gp);
-
-
-        root.getChildren().add(newGridPane);
         Scene scene = new Scene(root, 725, 500);
         primaryStage.setTitle("Irrigation");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
+            setSensorsTimersForZone(zoneDAO.find(i));
+        }
     }
 
     public void handleCommands(String input) throws ParseException {
@@ -97,116 +75,9 @@ public class App extends Application{
         }
     }
 
-    public static void changeColorNodeByRowColumnIndex (final int row, final int column, GridPane gridPane, Paint color) {
-        ObservableList<Node> childrens = gridPane.getChildren();
-        Circle circle = null;
-        for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
-                circle = (Circle) node;
-                circle.setFill(color);
-                childrens.remove(node);
-                childrens.add(circle);
-                break;
-            }
-        }
-    }
-
-    public static void changeStrokeNodeByRowColumnIndex (final int row, final int column, GridPane gridPane, double width) {
-        ObservableList<Node> childrens = gridPane.getChildren();
-        Circle circle = null;
-        for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
-                circle = (Circle) node;
-                circle.setStroke(Color.ORANGE);
-                circle.setStrokeWidth(width);
-                childrens.remove(node);
-                childrens.add(circle);
-                break;
-            }
-        }
-    }
-
-
-
-    public static Map<String, Integer> getIndex(int zoneNumber) {
-        Map<String, Integer> map = new HashMap<>();
-
-        switch (zoneNumber) {
-            case 1:
-                map.put("row", 0);
-                map.put("column", 0);
-                break;
-            case 2:
-                map.put("row", 0);
-                map.put("column", 1);
-                break;
-            case 3:
-                map.put("row", 0);
-                map.put("column", 2);
-                break;
-            case 4:
-                map.put("row", 1);
-                map.put("column", 0);
-                break;
-            case 5:
-                map.put("row", 1);
-                map.put("column", 1);
-                break;
-            case 6:
-                map.put("row", 1);
-                map.put("column", 2);
-                break;
-            case 7:
-                map.put("row", 2);
-                map.put("column", 0);
-                break;
-            case 8:
-                map.put("row", 2);
-                map.put("column", 1);
-                break;
-            case 9:
-                map.put("row", 2);
-                map.put("column", 2);
-                break;
-            case 10:
-                map.put("row", 3);
-                map.put("column", 0);
-                break;
-            case 11:
-                map.put("row", 3);
-                map.put("column", 1);
-                break;
-            case 12:
-                map.put("row", 3);
-                map.put("column", 2);
-                break;
-            case 13:
-                map.put("row", 4);
-                map.put("column", 0);
-                break;
-            case 14:
-                map.put("row", 4);
-                map.put("column", 1);
-                break;
-            case 15:
-                map.put("row", 4);
-                map.put("column", 2);
-                break;
-        }
-
-        return map;
-    }
-
-
     private void enableWatering(EnableWatering command) {
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
-
-            // Get current index
-            Map<String, Integer> map = getIndex(zoneId);
-            // Change color
-            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
-
 
             zone.setFirstWatering(command.getFirstWatering());
             zone.setWateringInterval(command.getWateringInterval());
@@ -216,28 +87,68 @@ public class App extends Application{
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
 
-            setTimerForZone(zone);
+            setWateringTimersForZone(zone);
             mainWindowController.print("Enable watering zone " + zoneId);
 
         }
     }
 
-    private void setTimerForZone(Zone zone) {
+    private void setWateringTimersForZone(Zone zone) {
         int zoneId = zone.getId();
         Timer timer = new Timer(true);
+
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                mainWindowController.print("Watering zone " + zoneId);
-                if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
-                    mainWindowController.print("Fertilizing zone " + zoneId);
+                if(zone.isWaterSensorNotResponding()) {
+                    mainWindowController.print("Zone " + zoneId +
+                            "'s water sensor is not responding! Please check it!");
                 }
+                mainWindowController.print("Watering zone " + zoneId);
+                mainWindowController.changeZoneColor(zoneId, Color.GREEN);
+
+                if (zone.getFertilizingStatus() == FertilizingStatus.ENABLED) {
+                    if(zone.isFertilizerSensorNotResponding()) {
+                        mainWindowController.print("Zone " + zoneId +
+                                "'s fertilizing sensor is not responding! Please check it!");
+                    }
+                    mainWindowController.print("Fertilizing zone " + zoneId);
+                    mainWindowController.changeZoneBorderSize(zoneId, 5.0);
+                }
+
+                int delay = (int) (zone.getWateringDuration() * 60000);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        mainWindowController.print("Watering zone stopped: " + zoneId);
+                        mainWindowController.changeZoneColor(zoneId, Color.BLACK);
+                        mainWindowController.changeZoneBorderSize(zoneId, 0);
+                    }
+                }, delay);
             }
         };
         timer.schedule(task,
                 Date.from(zone.getFirstWatering().atZone(ZoneId.systemDefault()).toInstant()),
                 zone.getWateringInterval().toNanoOfDay() / 1000000);
-        zoneTimers.put(zoneId, timer);
+        zoneWateringTimers.put(zoneId, timer);
+    }
+
+    private void setSensorsTimersForZone(Zone zone) {
+        int zoneId = zone.getId();
+        Timer timer = new Timer(true);
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                int humidity = zone.getHumidityValue();
+                sensorLogger.info(zone.getId() + " " + humidity);
+                mainWindowController.print(String.format("Zone %d: humidity - %d", zoneId, humidity));
+            }
+        };
+
+        timer.schedule(task, Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()),
+                zone.getSensorsCheckInterval().toNanoOfDay() / 1000000);
+        zoneSensorsTimers.put(zoneId, timer);
     }
 
     private void showWatering(ShowWatering command) {
@@ -247,7 +158,7 @@ public class App extends Application{
                     zoneId, zone.getWateringStatus() == WateringStatus.ENABLED);
             if (zone.getWateringStatus() == WateringStatus.ENABLED) {
                 data = data + String.format(", first watering - %s, watering interval - %s," +
-                                " water volume - %dL, watering duration - %dm, humidity range - %d%%-%d%%",
+                                " water volume - %dL, watering duration - %fm, humidity range - %d%%-%d%%",
                         zone.getFirstWatering().toString(),
                         zone.getWateringInterval().toString(),
                         zone.getWaterVolume(),
@@ -269,17 +180,11 @@ public class App extends Application{
                 continue;
             }
 
-            // Get current index
-            Map<String, Integer> map = getIndex(zoneId);
-            // Change color
-            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.BLACK);
-
             zone.setWateringStatus(WateringStatus.DISABLED);
             zoneDAO.update(zone);
-            zoneTimers.get(zoneId).cancel();
+            zoneWateringTimers.get(zoneId).cancel();
             mainWindowController.print("Stop watering zone " + zoneId);
         }
-
     }
 
     private void resumeWatering(ResumeWatering command) {
@@ -289,14 +194,9 @@ public class App extends Application{
                 continue;
             }
 
-            // Get current index
-            Map<String, Integer> map = getIndex(zoneId);
-            // Change color
-            changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.GREEN);
-
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
-            setTimerForZone(zone);
+            setWateringTimersForZone(zone);
             mainWindowController.print("Resuming watering zone " + zoneId);
         }
     }
@@ -320,7 +220,7 @@ public class App extends Application{
                 zone.setWaterVolume(waterVolume);
             }
 
-            Integer wateringDuration = command.getWateringDuration();
+            Double wateringDuration = command.getWateringDuration();
             if (wateringDuration != null) {
                 zone.setWateringDuration(wateringDuration);
             }
@@ -332,8 +232,8 @@ public class App extends Application{
 
             zoneDAO.update(zone);
 
-            zoneTimers.get(zoneId).cancel();
-            setTimerForZone(zone);
+            zoneWateringTimers.get(zoneId).cancel();
+            setWateringTimersForZone(zone);
             mainWindowController.print("Change watering zone " + zoneId);
         }
     }
@@ -344,6 +244,8 @@ public class App extends Application{
 
             zone.setSensorsCheckInterval(command.getCheckInterval());
             zoneDAO.update(zone);
+            zoneSensorsTimers.get(zoneId).cancel();
+            setSensorsTimersForZone(zone);
 
             mainWindowController.print("Set sensor periodicity for zone " + zoneId);
         }
@@ -367,11 +269,6 @@ public class App extends Application{
     private void enableFertilizing(EnableFertilizing command) {
         for(int zoneId : command.getZones()) {
             Zone zone = zoneDAO.find(zoneId);
-
-            // Get current index
-            Map<String, Integer> map = getIndex(zoneId);
-            // Change color
-            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp,5.0);
 
             zone.setFertilizerVolume(command.getFertilizerVolume());
             zone.setFertilizingStatus(FertilizingStatus.ENABLED);
@@ -410,35 +307,49 @@ public class App extends Application{
                 continue;
             }
 
-            // Get current index
-            Map<String, Integer> map = getIndex(zoneId);
-            // Change color
-            changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, 0);
-
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
             mainWindowController.print("Stop fertilizing zone " + zoneId);
         }
     }
 
-    public void stopEverything(){
-        for(int i : zoneTimers.keySet()){
-            stopZoneWork(i);
+    public void resetAllZones(){
+        for(int i : zoneWateringTimers.keySet()){
+            resetZoneState(i);
+        }
+
+        for(Timer sensorsTimer : zoneSensorsTimers.values()) {
+            sensorsTimer.cancel();
         }
 
         mainWindowController.print("System urgently stopped");
     }
 
+    public void waterShortage() {
+        for(int i : zoneWateringTimers.keySet()){
+            resetZoneState(i);
+        }
+        mainWindowController.print("Water shortage! Please refill the water tank");
+    }
+
+    public void fertilizerShortage() {
+        for(Zone zone : zoneDAO.findAll())
+        {
+            zone.setFertilizingStatus(FertilizingStatus.DISABLED);
+            mainWindowController.changeZoneBorderSize(zone.getId(), 0);
+        }
+        mainWindowController.print("Fertilizer shortage! Please refill the fertilizer tank");
+    }
+
     public void invalidHumidity(){
         Zone zone = zoneDAO.find(7);
         zone.setHumidityValue(50);
-        stopZoneWork(7);
+        resetZoneState(7);
     }
 
-    private void stopZoneWork(int id) {
-        zoneTimers.get(id).cancel();
-        Map<String, Integer> map = getIndex(id);
-        changeColorNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, Color.BLACK);
-        changeStrokeNodeByRowColumnIndex(map.get("row"), map.get("column"), gp, 0);
+    private void resetZoneState(int id) {
+        zoneWateringTimers.get(id).cancel();
+        mainWindowController.changeZoneColor(id, Color.BLACK);
+        mainWindowController.changeZoneBorderSize(id, 0);
     }
 
     private void handleCommand(Command command) {
@@ -477,5 +388,17 @@ public class App extends Application{
                 stopFertilizing((StopFertilizing) command);
                 break;
         }
+    }
+
+    public void setMainWindowController(MainWindow mainWindowController) {
+        this.mainWindowController = mainWindowController;
+    }
+
+    public void waterSensorNotResponding() {
+        zoneDAO.find(9).setWaterSensorNotResponding(true);
+    }
+
+    public void fertilizerSensorNotResponding() {
+        zoneDAO.find(9).setFertilizerSensorNotResponding(true);
     }
 }

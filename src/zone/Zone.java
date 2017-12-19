@@ -12,19 +12,12 @@ public class Zone {
     private LocalDateTime firstWatering;
     private LocalTime wateringInterval;
     private int waterVolume;
-    private int wateringDuration;
+    private double wateringDuration;
     private Map.Entry<Integer, Integer> humidityRange;
 
-    public int getHumidityValue() {
-        int min = humidityRange.getKey();
-        int max = humidityRange.getValue() + 1;
-        humidityValue = ThreadLocalRandom.current().nextInt(min, max);
-        return humidityValue;
-    }
+    private boolean waterSensorNotResponding;
 
-    public void setHumidityValue(int humidityValue) {
-        this.humidityValue = humidityValue;
-    }
+    private boolean fertilizerSensorNotResponding;
 
     private int humidityValue;
 
@@ -35,7 +28,7 @@ public class Zone {
 
     public Zone(int id) {
         this.id = id;
-        sensorsCheckInterval = LocalTime.of(0, 5);
+        sensorsCheckInterval = LocalTime.of(0, 1);
         wateringStatus = WateringStatus.NOT_INITIALISED;
         fertilizingStatus = FertilizingStatus.NOT_INITIALISED;
     }
@@ -76,11 +69,11 @@ public class Zone {
         this.waterVolume = waterVolume;
     }
 
-    public int getWateringDuration() {
+    public double getWateringDuration() {
         return wateringDuration;
     }
 
-    public void setWateringDuration(int wateringDuration) {
+    public void setWateringDuration(double wateringDuration) {
         this.wateringDuration = wateringDuration;
     }
 
@@ -90,6 +83,42 @@ public class Zone {
 
     public void setHumidityRange(Map.Entry<Integer, Integer> humidityRange) {
         this.humidityRange = humidityRange;
+    }
+
+    public boolean isWaterSensorNotResponding() {
+        return waterSensorNotResponding;
+    }
+
+    public void setWaterSensorNotResponding(boolean waterSensorNotResponding) {
+        this.waterSensorNotResponding = waterSensorNotResponding;
+    }
+
+    public boolean isFertilizerSensorNotResponding() {
+        return fertilizerSensorNotResponding;
+    }
+
+    public void setFertilizerSensorNotResponding(boolean fertilizerSensorNotResponding) {
+        this.fertilizerSensorNotResponding = fertilizerSensorNotResponding;
+    }
+
+    public int getHumidityValue() {
+        int min;
+        int max;
+
+        if (humidityRange != null) {
+            min = humidityRange.getKey();
+            max = humidityRange.getValue() + 1;
+        } else {
+            min = 0;
+            max = 100;
+        }
+
+        humidityValue = ThreadLocalRandom.current().nextInt(min, max);
+        return humidityValue;
+    }
+
+    public void setHumidityValue(int humidityValue) {
+        this.humidityValue = humidityValue;
     }
 
     public LocalTime getSensorsCheckInterval() {

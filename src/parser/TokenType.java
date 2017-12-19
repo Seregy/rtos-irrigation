@@ -7,6 +7,7 @@ public enum TokenType {
     COLON_SEPARATOR(":"),
     SEMICOLON_SEPARATOR(";"),
     COMMA_SEPARATOR(","),
+    DOT_SEPARATOR("\\."),
     HYPHEN_SEPARATOR("-"),
     WHITESPACE_SEPARATOR("\\s+"),
     OPEN_BRACKET("\\("),

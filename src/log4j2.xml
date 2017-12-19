@@ -10,28 +10,19 @@
                 <Pattern>[%c{1}] [%d{dd-MM-yyyy HH:mm:ss}] %msg%n</Pattern>
             </PatternLayout>
         </File>
-        <TextArea name="TextArea">
-            <PatternLayout>
-                <Pattern>[%c{1}] [%d{dd-MM-yyyy HH:mm:ss}] %msg%n</Pattern>
-            </PatternLayout>
-        </TextArea>
     </Appenders>
     <Loggers>
         <Logger name="command" level="INFO">
             <AppenderRef ref="File"/>
-            <AppenderRef ref="TextArea"/>
         </Logger>
         <Logger name="interrupt" level="INFO">
             <AppenderRef ref="File"/>
-            <AppenderRef ref="TextArea"/>
         </Logger>
         <Logger name="sensor" level="INFO">
             <AppenderRef ref="File"/>
-            <AppenderRef ref="TextArea"/>
         </Logger>
         <Logger name="error" level="error">
             <AppenderRef ref="File"/>
-            <AppenderRef ref="TextArea"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="Console"/>

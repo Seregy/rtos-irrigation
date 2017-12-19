@@ -173,7 +173,6 @@ public class MainWindow {
         initZonesArray(circlesArray);
         rootPane.getChildren().add(pane);
         rootPane.getChildren().add(linePane);
-        TextAreaAppender.setTextArea(textArea);
     }
 
     public void changeZoneColor(int zoneId, Color color) {

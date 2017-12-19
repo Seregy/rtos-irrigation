@@ -315,6 +315,7 @@ public class App extends Application{
     public void resetAllZones(){
         for(int i : zoneWateringTimers.keySet()){
             resetZoneState(i);
+            mainWindowController.showLines(i);
         }
 
         for(Timer sensorsTimer : zoneSensorsTimers.values()) {

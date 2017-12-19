@@ -9,20 +9,21 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
+import java.io.*;
 import java.text.ParseException;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MainWindow {
     private static final Logger interruptLogger = LogManager.getLogger("interrupt");
@@ -38,8 +39,11 @@ public class MainWindow {
     private TextArea textArea;
     @FXML
     private GridPane pane;
+    @FXML
+    private GridPane linePane;
 
     private Circle[][] circlesArray = new Circle[3][5];
+    private Map<Integer, Line[]> linesDictionary = new HashMap<>();
 
     @FXML
     protected void handleSendCommand(ActionEvent actionEvent) {
@@ -88,6 +92,57 @@ public class MainWindow {
         app.fertilizerSensorNotResponding();
     }
 
+    @FXML
+    protected void handleShowLogsCommand(ActionEvent actionEvent){
+        File file = new File("logs//general.log");
+        if (file.exists())
+        {
+            if (Desktop.isDesktopSupported())
+            {
+                try
+                {
+                    Desktop.getDesktop().open(file);
+                }
+                catch (IOException e)
+                {
+
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                System.out.println("Awt Desktop is not supported!");
+            }
+        }
+    }
+
+    @FXML
+    protected void handleLoadProgrammeCommand(ActionEvent actionEvent){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Programme File");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("txt", "*.txt")
+        );
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null) {
+            openFile(file);
+        }
+    }
+
+    private void openFile(File file){
+        try {
+            Scanner input = new Scanner(file);
+            while (input.hasNext()) {
+                app.handleCommands(input.nextLine());
+            }
+            input.close();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -105,8 +160,14 @@ public class MainWindow {
         pane.setLayoutY(14.0);
         pane.setPrefHeight(321.0);
         pane.setPrefWidth(236.0);
+        linePane = new GridPane();
+        linePane.setLayoutX(14.0);
+        linePane.setLayoutY(14.0);
+        linePane.setPrefHeight(321.0);
+        linePane.setPrefWidth(236.0);
         initZonesArray(circlesArray);
         rootPane.getChildren().add(pane);
+        rootPane.getChildren().add(linePane);
         TextAreaAppender.setTextArea(textArea);
     }
 
@@ -124,12 +185,40 @@ public class MainWindow {
         for(int i = 0; i < circlesMatrix.length; i++) {
             ColumnConstraints column = new ColumnConstraints(90);
             pane.getColumnConstraints().add(column);
+            linePane.getColumnConstraints().add(column);
             for(int j = 0; j < circlesMatrix[i].length; j++) {
                 RowConstraints row = new RowConstraints(70);
                 pane.getRowConstraints().add(row);
+                linePane.getRowConstraints().add(row);
                 circlesMatrix[i][j] = new Circle(20);
                 pane.add(circlesMatrix[i][j], i, j);
+                drawLines(i, j);
             }
+        }
+    }
+
+    private void drawLines(int i, int j){
+        double x = 0;
+        double y = 40;
+        double s = 2;
+        Line line1 = new Line(x+s, x+s,y-s, y-s);
+        line1.setStroke(Color.RED);
+        line1.setStrokeWidth(2);
+        line1.setVisible(false);
+        Line line2 = new Line(x+s, x+s,y-s, y-s);
+        line2.setRotate(90);
+        line2.setStroke(Color.RED);
+        line2.setStrokeWidth(2);
+        line2.setVisible(false);
+        linesDictionary.put(j*3+i+1, new Line[]{line1,line2});
+        linePane.add(line1, i, j);
+        linePane.add(line2, i, j);
+    }
+
+    public void showLines(int index){
+        Line[] lines = linesDictionary.get(index);
+        for (Line line: lines) {
+            line.setVisible(true);
         }
     }
 

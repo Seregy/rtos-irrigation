@@ -351,6 +351,7 @@ public class App extends Application{
     }
 
     private void resetZoneState(int id) {
+        zoneDAO.find(id).setWateringStatus(WateringStatus.DISABLED);
         zoneWateringTimers.get(id).cancel();
         mainWindowController.changeZoneColor(id, Color.BLACK);
         mainWindowController.changeZoneBorderSize(id, 0);

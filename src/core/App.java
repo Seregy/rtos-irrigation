@@ -193,7 +193,6 @@ public class App extends Application{
             if (zone.getWateringStatus() != WateringStatus.DISABLED) {
                 continue;
             }
-
             zone.setWateringStatus(WateringStatus.ENABLED);
             zoneDAO.update(zone);
             setWateringTimersForZone(zone);
@@ -344,6 +343,11 @@ public class App extends Application{
         Zone zone = zoneDAO.find(7);
         zone.setHumidityValue(50);
         resetZoneState(7);
+    }
+
+    public void resumeWateringButton(){
+       int[] zones = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+       resumeWatering(new ResumeWatering(zones));
     }
 
     private void resetZoneState(int id) {

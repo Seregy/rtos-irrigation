@@ -33,5 +33,6 @@
             <Font size="10.0" />
          </font>
       </Button>
+      <Button fx:id="resumeButton" layoutX="600.0" layoutY="263.0" mnemonicParsing="false" onAction="#handleResumeCommand" prefHeight="25.0" prefWidth="118.0" text="Resume" textFill="#2b9a2f" />
   </children>
 </AnchorPane>

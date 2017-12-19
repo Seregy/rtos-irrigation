@@ -53,6 +53,11 @@ public class MainWindow {
     }
 
     @FXML
+    protected void handleResumeCommand(ActionEvent actionEvent) {
+        app.resumeWateringButton();
+    }
+
+    @FXML
     protected void handleStopCommand(ActionEvent actionEvent) {
         interruptLogger.info("1");
         app.resetAllZones();

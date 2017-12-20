@@ -142,7 +142,9 @@ public class MainWindow {
         try {
             Scanner input = new Scanner(file);
             while (input.hasNext()) {
-                app.handleCommands(input.nextLine());
+                String string = input.nextLine();
+                app.handleCommands(string);
+                commandLogger.info(string);
             }
             input.close();
         }

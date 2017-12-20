@@ -127,7 +127,7 @@ public class MainWindow {
     @FXML
     protected void handleLoadProgrammeCommand(ActionEvent actionEvent){
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Programme File");
+        fileChooser.setTitle("Open Program File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("txt", "*.txt")

@@ -327,6 +327,7 @@ public class App extends Application{
     public void waterShortage() {
         for(int i : zoneWateringTimers.keySet()){
             resetZoneState(i);
+            mainWindowController.showLines(i);
         }
         mainWindowController.print("Water shortage! Please refill the water tank");
     }

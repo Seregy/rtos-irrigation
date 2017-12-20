@@ -42,8 +42,6 @@ public class MainWindow {
     private GridPane pane;
     @FXML
     private GridPane linePane;
-    @FXML
-    private GridPane signalPane;
 
     private Circle[][] circlesArray = new Circle[3][5];
     private Map<Integer, Line[]> linesDictionary = new HashMap<>();
@@ -175,15 +173,9 @@ public class MainWindow {
         linePane.setLayoutY(14.0);
         linePane.setPrefHeight(321.0);
         linePane.setPrefWidth(236.0);
-        signalPane = new GridPane();
-        signalPane.setLayoutX(14.0);
-        signalPane.setLayoutY(14.0);
-        signalPane.setPrefHeight(321.0);
-        signalPane.setPrefWidth(236.0);
         initZonesArray(circlesArray);
         rootPane.getChildren().add(pane);
         rootPane.getChildren().add(linePane);
-        rootPane.getChildren().add(signalPane);
         TextAreaAppender.setTextArea(textArea);
     }
 
@@ -202,16 +194,13 @@ public class MainWindow {
             ColumnConstraints column = new ColumnConstraints(90);
             pane.getColumnConstraints().add(column);
             linePane.getColumnConstraints().add(column);
-            signalPane.getColumnConstraints().add(column);
             for(int j = 0; j < circlesMatrix[i].length; j++) {
                 RowConstraints row = new RowConstraints(70);
                 pane.getRowConstraints().add(row);
                 linePane.getRowConstraints().add(row);
-                signalPane.getRowConstraints().add(row);
                 circlesMatrix[i][j] = new Circle(20);
                 pane.add(circlesMatrix[i][j], i, j);
                 drawLines(i, j);
-                drawImages(i, j);
             }
         }
     }
@@ -232,26 +221,6 @@ public class MainWindow {
         linesDictionary.put(j*3+i+1, new Line[]{line1,line2});
         linePane.add(line1, i, j);
         linePane.add(line2, i, j);
-    }
-
-    private void drawImages(int i, int j) {
-        double x = 40;
-        double y = 8;
-        ImageView imageView = new ImageView();
-        Image image = new Image("/img/water.png");
-        imageView.setImage(image);
-        imageView.setCache(true);
-        imageView.setFitHeight(16);
-        imageView.setFitWidth(16);
-        imageView.setPickOnBounds(true);
-        imageView.setPreserveRatio(true);
-        imageView.setVisible(true);
-        imageView.toFront();
-        imageView.setX(x);
-        imageView.setY(y);
-        Pane pane = new Pane();
-        pane.getChildren().add(imageView);
-        signalPane.add(pane, i, j);
     }
 
     public void showLines(int index){

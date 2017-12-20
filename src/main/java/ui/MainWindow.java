@@ -233,20 +233,23 @@ public class MainWindow {
     }
 
     private void drawImages(int i, int j) {
-        double x = 0;
-        double y = 0;
+        double x = 40;
+        double y = 8;
         ImageView imageView = new ImageView();
-        Image image = new Image("File:resourses/water.png");
+        Image image = new Image("/img/water.png");
         imageView.setImage(image);
-        imageView.setLayoutX(x);
-        imageView.setLayoutY(y);
-        imageView.setFitHeight(13);
-        imageView.setFitWidth(13);
+        imageView.setCache(true);
+        imageView.setFitHeight(16);
+        imageView.setFitWidth(16);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
         imageView.setVisible(true);
         imageView.toFront();
-        signalPane.add(imageView,i,j);
+        imageView.setX(x);
+        imageView.setY(y);
+        Pane pane = new Pane();
+        pane.getChildren().add(imageView);
+        signalPane.add(pane, i, j);
     }
 
     public void showLines(int index){

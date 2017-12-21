@@ -1,9 +1,6 @@
 package core;
 
-import command.Command;
-import command.EnableWatering;
-import command.ShowWatering;
-import command.StopWatering;
+import command.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import parser.Parser;
@@ -45,21 +42,22 @@ public class AppTest {
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
-                "ПоказатиПолив: (7, 9);\nЗупинитиПолив: 7;";
+                "ПоказатиПолив: (5, 7, 9);\nЗупинитиПолив: (3, 7);" + "ВідновитиПолив: (7, 12);";
         List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
                         LocalDateTime.of(2017, 11, 1, 10, 10),
                         LocalTime.of(0, 30), 1, 2,
                         new AbstractMap.SimpleImmutableEntry<>(30, 40)),
-                new ShowWatering(new int[] {7, 9}),
-                new StopWatering(new int[] {7}));
+                new ShowWatering(new int[] {5, 7, 9}),
+                new StopWatering(new int[] {3, 7}),
+                new ResumeWatering(new int[] {7, 12}));
         when(mockedParser.parse(input)).thenReturn(commands);
 
         App app = new App(mockedDAO, mockedParser);
         app.setMainWindowController(mock(MainWindow.class));
         app.handleCommands(input);
 
-        verify(mockedDAO, times(9)).find(anyInt());
-        verify(mockedDAO, times(7)).update(any());
+        verify(mockedDAO, times(13)).find(anyInt());
+        verify(mockedDAO, times(8)).update(any());
     }
 
     @Test

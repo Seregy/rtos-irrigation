@@ -51,7 +51,7 @@ public class App extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main_window.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/main_window.fxml"));
         AnchorPane root = loader.load();
 
         mainWindowController = loader.getController();
@@ -327,6 +327,7 @@ public class App extends Application{
     public void waterShortage() {
         for(int i : zoneWateringTimers.keySet()){
             resetZoneState(i);
+            mainWindowController.showLines(i);
         }
         mainWindowController.print("Water shortage! Please refill the water tank");
     }

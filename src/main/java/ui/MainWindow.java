@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -18,7 +19,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import javafx.scene.image.Image;
 import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
@@ -124,7 +125,7 @@ public class MainWindow {
     @FXML
     protected void handleLoadProgrammeCommand(ActionEvent actionEvent){
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Programme File");
+        fileChooser.setTitle("Open Program File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("txt", "*.txt")
@@ -139,7 +140,9 @@ public class MainWindow {
         try {
             Scanner input = new Scanner(file);
             while (input.hasNext()) {
-                app.handleCommands(input.nextLine());
+                String string = input.nextLine();
+                app.handleCommands(string);
+                commandLogger.info(string);
             }
             input.close();
         }

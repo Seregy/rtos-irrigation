@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class App extends Application{
     private static final int AMOUNT_OF_ZONES = 15;
     private static final Logger sensorLogger = LogManager.getLogger("sensor");
+    private static final Logger generalLogger = LogManager.getLogger("error");
 
     private ZoneDAO zoneDAO;
     private Parser parser;
@@ -117,14 +118,18 @@ public class App extends Application{
                 }
 
                 int delay = (int) (zone.getWateringDuration() * 60000);
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mainWindowController.print("Watering zone stopped: " + zoneId);
-                        mainWindowController.changeZoneColor(zoneId, Color.BLACK);
-                        mainWindowController.changeZoneBorderSize(zoneId, 0);
-                    }
-                }, delay);
+                try {
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            mainWindowController.print("Watering zone stopped: " + zoneId);
+                            mainWindowController.changeZoneColor(zoneId, Color.BLACK);
+                            mainWindowController.changeZoneBorderSize(zoneId, 0);
+                        }
+                    }, delay);
+                } catch (IllegalStateException ise) {
+                    generalLogger.error(ise.getMessage());
+                }
             }
         };
         timer.schedule(task,

@@ -363,7 +363,7 @@ public class App extends Application{
            mainWindowController.hideLines(i);
        }
 
-       resumeWatering(new ResumeWatering(zones));
+       handleCommand(new ResumeWatering(zones));
     }
 
     private void resetZoneState(int id) {

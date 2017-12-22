@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class AppTest {
     @Test
-    void handleOneCommand() throws ParseException{
+    void handleEnableWatering() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -33,57 +33,94 @@ public class AppTest {
         App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
         app.handleCommands(input);
 
-        Assertions.assertNotEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(7).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(6).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.ENABLED, mockedDAO.find(7).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.ENABLED, mockedDAO.find(8).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.ENABLED, mockedDAO.find(12).getWateringStatus());
     }
 
     @Test
-    void handleMultipleCommands() throws ParseException {
+    void handleShowWatering() throws ParseException {
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
-        String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
-                "ПоказатиПолив: (5, 7, 9);\nЗупинитиПолив: (3, 7);" + "ВідновитиПолив: (7, 12);";
-        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
+        String input = "ПідключитиПолив: 7, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ПоказатиПолив: (5, 7);";
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7},
                         LocalDateTime.of(2017, 11, 1, 10, 10),
                         LocalTime.of(0, 30), 1, 2,
                         new AbstractMap.SimpleImmutableEntry<>(30, 40)),
-                new ShowWatering(new int[] {5, 7, 9}),
-                new StopWatering(new int[] {3, 7}),
-                new ResumeWatering(new int[] {7, 12}));
+                new ShowWatering(new int[] {5, 7}));
         when(mockedParser.parse(input)).thenReturn(commands);
 
-        App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
+        MainWindow mockedWindow = mock(MainWindow.class);
+        App app = new App(mockedDAO, mockedParser, mockedWindow);
         app.handleCommands(input);
 
-        Assertions.assertNotEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(7).getWateringStatus());
-    }
-
-
-    @Test
-    void throwErrorOnParserError() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
-        Parser mockedParser = mock(Parser.class);
-
-        when(mockedParser.parse(anyString())).thenThrow(ParseException.class);
-
-        App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
-        Assertions.assertThrows(ParseException.class,
-                () -> app.handleCommands("ПідключитиПолив: (7-10, 12, 15), " +
-                        "2017-11-01 10:10, 00:30, 1, 2, 30-40;"));
-
-        verify(mockedDAO, times(0)).update(any());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 5: watering enabled - false")));
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 7: watering enabled - true")));
     }
 
     @Test
-    void handleChangeWatering() throws ParseException{
+    void handleStopWatering() throws ParseException {
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
-        String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+        String input = "ПідключитиПолив: 7, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "\nЗупинитиПолив: (3, 7);";
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7},
+                        LocalDateTime.of(2017, 11, 1, 10, 10),
+                        LocalTime.of(0, 30), 1, 2,
+                        new AbstractMap.SimpleImmutableEntry<>(30, 40)),
+                new StopWatering(new int[] {3, 7}));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        MainWindow mockedWindow = mock(MainWindow.class);
+        App app = new App(mockedDAO, mockedParser, mockedWindow);
+        app.handleCommands(input);
+
+        Assertions.assertEquals(WateringStatus.DISABLED, mockedDAO.find(7).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(3).getWateringStatus());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Stop watering zone 7")));
+        verify(mockedWindow, times(0)).print(argThat(s -> s.startsWith("Stop watering zone 3")));
+    }
+
+    @Test
+    void handleResumeWatering() throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: (7, 8), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ЗупинитиПолив: 7;" + "ВідновитиПолив: (3, 7, 8);";
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8},
+                        LocalDateTime.of(2017, 11, 1, 10, 10),
+                        LocalTime.of(0, 30), 1, 2,
+                        new AbstractMap.SimpleImmutableEntry<>(30, 40)),
+                new StopWatering(new int[] {7}),
+                new ResumeWatering(new int[] {3, 7, 8}));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        MainWindow mockedWindow = mock(MainWindow.class);
+        App app = new App(mockedDAO, mockedParser, mockedWindow);
+        app.handleCommands(input);
+
+        Assertions.assertEquals(WateringStatus.ENABLED, mockedDAO.find(7).getWateringStatus());
+        Assertions.assertEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(3).getWateringStatus());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Resuming watering zone 7")));
+        verify(mockedWindow, times(0)).print(argThat(s -> s.startsWith("Resuming watering zone 3")));
+        verify(mockedWindow, times(0)).print(argThat(s -> s.startsWith("Resuming watering zone 8")));
+    }
+
+    @Test
+    void handleChangeWatering() throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
                 "ЗмінитиПолив: 10, 2017-12-21 12:00, 00:15, 2, 3, 10-20;";
 
         LocalTime interval = LocalTime.of(0, 15);
-        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
                 LocalDateTime.of(2017, 11, 1, 10, 10),
                 LocalTime.of(0, 30), 1, 2,
                 new AbstractMap.SimpleImmutableEntry<>(30, 40)),
@@ -99,23 +136,22 @@ public class AppTest {
         Assertions.assertEquals(interval, mockedDAO.find(10).getWateringInterval());
     }
 
-
     @Test
-    void handleChangeWateringWithoutOneParam() throws ParseException{
+    void handleChangeWateringWithoutFirstWatering() throws ParseException {
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
-        String input = "ПідключитиПолив: (7-10, 12, 15), , 00:30, 1, 2, 30-40;" +
-                "ЗмінитиПолив: 10, 2017-12-21 12:00, 00:15, 2, 3, 10-20;";
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 00:30, 1, 2, 30-40;" +
+                "ЗмінитиПолив: 10, , 00:15, 2, 3, 10-20;";
 
         LocalDateTime date = LocalDateTime.of(2017, 11, 1, 10, 10);
-        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
                         date,
                         LocalTime.of(0, 30), 1, 2,
                         new AbstractMap.SimpleImmutableEntry<>(30, 40)),
                 new ChangeWatering(new int[] {10},
                         null,
-                        LocalTime.of(0, 30), 2, 3.0,
+                        LocalTime.of(0, 15), 2, 3.0,
                         new AbstractMap.SimpleImmutableEntry<>(10, 20)));
         when(mockedParser.parse(input)).thenReturn(commands);
 
@@ -123,19 +159,20 @@ public class AppTest {
         app.handleCommands(input);
 
         Assertions.assertEquals(date, mockedDAO.find(10).getFirstWatering());
+        Assertions.assertEquals(LocalTime.of(0, 15), mockedDAO.find(10).getWateringInterval());
     }
 
     @Test
-    void handleChangeWateringWithoutTwoParam() throws ParseException{
+    void handleChangeWateringWithoutFirstWateringAndWateringInterval() throws ParseException {
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
-        String input = "ПідключитиПолив: (7-10, 12, 15), , 00:30, 1, 2, 30-40;" +
-                "ЗмінитиПолив: 10, 2017-12-21 12:00, 00:15, 2, 3, 10-20;";
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:01, 1, 2, 30-40;" +
+                "ЗмінитиПолив: 10, , , 2, 3, 10-20;";
 
         LocalDateTime date = LocalDateTime.of(2017, 11, 1, 10, 10);
         LocalTime time = LocalTime.of(0, 1);
-        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
                         date, time, 1, 2,
                         new AbstractMap.SimpleImmutableEntry<>(30, 40)),
                 new ChangeWatering(new int[] {10},
@@ -149,6 +186,101 @@ public class AppTest {
 
         Assertions.assertEquals(date, mockedDAO.find(10).getFirstWatering());
         Assertions.assertEquals(time, mockedDAO.find(10).getWateringInterval());
+        Assertions.assertEquals(2, mockedDAO.find(10).getWaterVolume());
+    }
+
+    @Test
+    void handleChangeWateringWithoutFirstWateringWateringIntervalAndWaterVolume() throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ЗмінитиПолив: 10, , , , 3, 10-20;";
+
+        LocalDateTime date = LocalDateTime.of(2017, 11, 1, 10, 10);
+        LocalTime time = LocalTime.of(0, 1);
+        int waterVolume = 1;
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
+                        date, time, waterVolume, 2,
+                        new AbstractMap.SimpleImmutableEntry<>(30, 40)),
+                new ChangeWatering(new int[] {10},
+                        null,
+                        null, null, 3.0,
+                        new AbstractMap.SimpleImmutableEntry<>(10, 20)));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
+        app.handleCommands(input);
+
+        Assertions.assertEquals(date, mockedDAO.find(10).getFirstWatering());
+        Assertions.assertEquals(time, mockedDAO.find(10).getWateringInterval());
+        Assertions.assertEquals(waterVolume, mockedDAO.find(10).getWaterVolume());
+        Assertions.assertEquals(3, mockedDAO.find(10).getWateringDuration());
+    }
+
+    @Test
+    void handleChangeWateringWithoutFirstWateringWateringIntervalWaterVolumeAndWateringDuration()
+            throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ЗмінитиПолив: 10, , , , , 10-20;";
+
+        LocalDateTime date = LocalDateTime.of(2017, 11, 1, 10, 10);
+        LocalTime time = LocalTime.of(0, 1);
+        int waterVolume = 1;
+        double wateringDuration = 2;
+        Map.Entry<Integer, Integer> changedHumidityRange = new AbstractMap.SimpleImmutableEntry<>(10, 20);
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
+                        date, time, waterVolume, wateringDuration,
+                        new AbstractMap.SimpleImmutableEntry<>(30, 40)),
+                new ChangeWatering(new int[] {10},
+                        null,null, null,
+                        null, changedHumidityRange));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
+        app.handleCommands(input);
+
+        Assertions.assertEquals(date, mockedDAO.find(10).getFirstWatering());
+        Assertions.assertEquals(time, mockedDAO.find(10).getWateringInterval());
+        Assertions.assertEquals(waterVolume, mockedDAO.find(10).getWaterVolume());
+        Assertions.assertEquals(wateringDuration, mockedDAO.find(10).getWateringDuration());
+        Assertions.assertEquals(changedHumidityRange, mockedDAO.find(10).getHumidityRange());
+    }
+
+    @Test
+    void handleChangeWateringWithoutParams()
+            throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ЗмінитиПолив: 10, , , , , ;";
+
+        LocalDateTime date = LocalDateTime.of(2017, 11, 1, 10, 10);
+        LocalTime time = LocalTime.of(0, 1);
+        int waterVolume = 1;
+        double wateringDuration = 2;
+        Map.Entry<Integer, Integer> humidityRange = new AbstractMap.SimpleImmutableEntry<>(30, 40);
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{10},
+                        date, time, waterVolume, wateringDuration, humidityRange),
+                new ChangeWatering(new int[] {10},
+                        null,null, null,
+                        null, null));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        MainWindow mockedWindow = mock(MainWindow.class);
+        App app = new App(mockedDAO, mockedParser, mockedWindow);
+        app.handleCommands(input);
+
+        Assertions.assertEquals(date, mockedDAO.find(10).getFirstWatering());
+        Assertions.assertEquals(time, mockedDAO.find(10).getWateringInterval());
+        Assertions.assertEquals(waterVolume, mockedDAO.find(10).getWaterVolume());
+        Assertions.assertEquals(wateringDuration, mockedDAO.find(10).getWateringDuration());
+        Assertions.assertEquals(humidityRange, mockedDAO.find(10).getHumidityRange());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Change watering zone 10")));
     }
 
     @Test
@@ -183,8 +315,8 @@ public class AppTest {
         MainWindow mockedWindow = mock(MainWindow.class);
         App app = new App(mockedDAO, mockedParser, mockedWindow);
         app.handleCommands(input);
-        verify(mockedDAO, times(3)).update(mockedDAO.find(1));
-        verify(mockedWindow, atLeastOnce()).print(anyString());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 1: humidity")));
+        verify(mockedWindow, never()).print(argThat(s -> s.startsWith("Zone 2: humidity")));
     }
 
     @Test
@@ -212,7 +344,7 @@ public class AppTest {
         MainWindow mockedWindow = mock(MainWindow.class);
         App app = new App(mockedDAO, mockedParser, mockedWindow);
         app.handleCommands(input);
-        verify(mockedWindow, atLeastOnce()).print(anyString());
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 1: fertilizing")));
     }
 
     @Test
@@ -243,6 +375,47 @@ public class AppTest {
         app.handleCommands(input);
         Assertions.assertEquals(FertilizingStatus.DISABLED, mockedDAO.find(1).getFertilizingStatus());
         Assertions.assertEquals(FertilizingStatus.NOT_INITIALISED, mockedDAO.find(2).getFertilizingStatus());
+    }
+
+    @Test
+    void handleMultipleCommands() throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
+                "ПоказатиПолив: (5, 7, 9);\nЗупинитиПолив: (3, 7);" + "ВідновитиПолив: (7, 12);";
+        List<Command> commands = Arrays.asList(new EnableWatering(new int[]{7, 8, 9, 10, 12, 15},
+                        LocalDateTime.of(2017, 11, 1, 10, 10),
+                        LocalTime.of(0, 30), 1, 2,
+                        new AbstractMap.SimpleImmutableEntry<>(30, 40)),
+                new ShowWatering(new int[] {5, 7, 9}),
+                new StopWatering(new int[] {3, 7}),
+                new ResumeWatering(new int[] {7, 12}));
+        when(mockedParser.parse(input)).thenReturn(commands);
+
+        MainWindow mockedWindow = mock(MainWindow.class);
+        App app = new App(mockedDAO, mockedParser, mockedWindow);
+        app.handleCommands(input);
+
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 5: watering enabled - false")));
+        verify(mockedWindow, times(1)).print(argThat(s -> s.startsWith("Zone 7: watering enabled - true")));
+        Assertions.assertNotEquals(WateringStatus.NOT_INITIALISED, mockedDAO.find(7).getWateringStatus());
+    }
+
+
+    @Test
+    void throwErrorOnParserError() throws ParseException {
+        ZoneDAO mockedDAO = mockZoneDAO();
+        Parser mockedParser = mock(Parser.class);
+
+        when(mockedParser.parse(anyString())).thenThrow(ParseException.class);
+
+        App app = new App(mockedDAO, mockedParser, mock(MainWindow.class));
+        Assertions.assertThrows(ParseException.class,
+                () -> app.handleCommands("ПідключитиПолив: (7-10, 12, 15), " +
+                        "2017-11-01 10:10, 00:30, 1, 2, 30-40;"));
+
+        verify(mockedDAO, times(0)).update(any());
     }
 
     private ZoneDAO mockZoneDAO() {

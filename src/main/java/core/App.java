@@ -343,18 +343,15 @@ public class App extends Application{
     }
 
     public void fertilizerShortage() {
-        for(Zone zone : zoneDAO.findAll())
-        {
+        for(Zone zone : zoneDAO.findAll()) {
             zone.setFertilizingStatus(FertilizingStatus.DISABLED);
             mainWindowController.changeZoneBorderSize(zone.getId(), 0);
         }
         mainWindowController.print("Fertilizer shortage! Please refill the fertilizer tank");
     }
 
-    public void invalidHumidity(){
-        Zone zone = zoneDAO.find(7);
-        zone.setHumidityValue(50);
-        resetZoneState(7);
+    public void invalidHumidity(int id){
+        resetZoneState(id);
     }
 
     public void resumeWateringButton(){
@@ -411,11 +408,11 @@ public class App extends Application{
         }
     }
 
-    public void waterSensorNotResponding() {
-        zoneDAO.find(9).setWaterSensorNotResponding(true);
+    public void waterSensorNotResponding(int id) {
+        zoneDAO.find(id).setWaterSensorNotResponding(true);
     }
 
-    public void fertilizerSensorNotResponding() {
-        zoneDAO.find(9).setFertilizerSensorNotResponding(true);
+    public void fertilizerSensorNotResponding(int id) {
+        zoneDAO.find(id).setFertilizerSensorNotResponding(true);
     }
 }

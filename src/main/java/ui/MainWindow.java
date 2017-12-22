@@ -71,7 +71,7 @@ public class MainWindow {
     @FXML
     protected void handleInvalidHumidityCommand(ActionEvent actionEvent){
         interruptLogger.info("2");
-        app.invalidHumidity();
+        app.invalidHumidity(9);
     }
 
     @FXML
@@ -89,13 +89,13 @@ public class MainWindow {
     @FXML
     protected void handleWaterNoResponseCommand(ActionEvent actionEvent){
         interruptLogger.info("5");
-        app.waterSensorNotResponding();
+        app.waterSensorNotResponding(9);
     }
 
     @FXML
     protected void handleFertilizerNoResponseCommand(ActionEvent actionEvent){
         interruptLogger.info("6");
-        app.fertilizerSensorNotResponding();
+        app.fertilizerSensorNotResponding(9);
     }
 
     @FXML

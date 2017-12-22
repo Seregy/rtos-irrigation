@@ -152,7 +152,7 @@ public class App extends Application{
             public void run() {
                 int humidity = zone.getHumidityValue();
                 sensorLogger.info(zone.getId() + " " + humidity);
-                mainWindowController.print(String.format("Zone %d: humidity - %d", zoneId, humidity));
+                mainWindowController.print(String.format("[Sensor] Zone %d: humidity - %d", zoneId, humidity));
             }
         };
 

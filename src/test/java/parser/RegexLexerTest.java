@@ -7,6 +7,45 @@ import java.text.ParseException;
 import java.util.*;
 
 public class RegexLexerTest {
+
+    @Test
+    void tokenizeWhitespace() throws ParseException {
+        RegexLexer lexer = new RegexLexer();
+
+        List<Token> tokens = lexer.tokenize(" ");
+        Assertions.assertTrue(tokens.isEmpty());
+    }
+
+    @Test
+    void tokenizeString() throws ParseException {
+        RegexLexer lexer = new RegexLexer();
+
+        List<Token> tokens = lexer.tokenize("SomeString");
+        List<Token> expected = Collections.singletonList(new Token(TokenType.STRING, "SomeString"));
+        Assertions.assertEquals(expected, tokens);
+    }
+
+    @Test
+    void throwErrorOnUnknownSymbol() throws Exception {
+        RegexLexer lexer = new RegexLexer();
+        Assertions.assertThrows(ParseException.class, () -> {
+            lexer.tokenize("String ?");});
+    }
+
+    @Test
+    void throwErrorOnWhitespaceAndUnknownSymbol() throws ParseException {
+        RegexLexer lexer = new RegexLexer();
+
+        Assertions.assertThrows(ParseException.class, () -> lexer.tokenize(" %"));
+    }
+
+    @Test
+    void throwErrorOnStringAndUnknownSymbol() throws ParseException {
+        RegexLexer lexer = new RegexLexer();
+
+        Assertions.assertThrows(ParseException.class, () -> lexer.tokenize("SomeString %"));
+    }
+
     @Test
     void tokenizeOneCommand() throws ParseException {
         RegexLexer lexer = new RegexLexer();
@@ -83,12 +122,5 @@ public class RegexLexerTest {
                 new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
 
         Assertions.assertEquals(expected, tokens);
-    }
-
-    @Test
-    void throwErrorOnUnknownSymbol() throws Exception {
-        RegexLexer lexer = new RegexLexer();
-        Assertions.assertThrows(ParseException.class, () -> {
-            lexer.tokenize("String ?");});
     }
 }

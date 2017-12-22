@@ -72,6 +72,196 @@ public class TokenParserTest {
     }
 
     @Test
+    void parseResumeWateringCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ВідновитиПолив"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ВідновитиПолив: 1;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        ResumeWatering resumeWatering = (ResumeWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{1}, resumeWatering.getZones());
+    }
+
+    @Test
+    void parseChangeWateringCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ЗмінитиПолив"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2017"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "11"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "01"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "10"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "00"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "1"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "2"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.HYPHEN_SEPARATOR, "-"),
+                new Token(TokenType.INTEGER_NUMBER, "40"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ЗмінитиПолив: 7, 2017-11-01 10:10, 00:30, 1, 2, 30-40;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        ChangeWatering changeWatering = (ChangeWatering) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, changeWatering.getZones());
+        Assertions.assertEquals(LocalDateTime.of(2017, 11, 1, 10, 10),
+                changeWatering.getFirstWatering());
+        Assertions.assertEquals(LocalTime.of(0, 30), changeWatering.getWateringInterval());
+        Assertions.assertEquals(Integer.valueOf(1), changeWatering.getWaterVolume());
+        Assertions.assertEquals(Double.valueOf(2), changeWatering.getWateringDuration());
+        Assertions.assertEquals(new AbstractMap.SimpleImmutableEntry<>(30, 40), changeWatering.getHumidityRange());
+    }
+
+    @Test
+    void parseSetSensorPeriodicityCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ЗадатиПеріодичністьДатчиків"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "00"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "30"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ЗадатиПеріодичністьДатчиків: 7, 00:30;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        SetSensorPeriodicity setSensorPeriodicity = (SetSensorPeriodicity) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, setSensorPeriodicity.getZones());
+        Assertions.assertEquals(LocalTime.of(0, 30), setSensorPeriodicity.getCheckInterval());
+    }
+
+    @Test
+    void parseShowHumidityCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПоказатиРівеньВологості"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ПоказатиРівеньВологості: 7;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        ShowHumidity showHumidity = (ShowHumidity) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, showHumidity.getZones());
+    }
+
+    @Test
+    void parseEnableFertilizingCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПідключитиУдобрювання"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "5"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ПідключитиУдобрювання: 7, 5;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        EnableFertilizing enableFertilizing = (EnableFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, enableFertilizing.getZones());
+        Assertions.assertEquals(5, enableFertilizing.getFertilizerVolume());
+    }
+
+    @Test
+    void parseShowFertilizingCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПоказатиУдобрювання"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ПоказатиУдобрювання: 7;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        ShowFertilizing showFertilizing = (ShowFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, showFertilizing.getZones());
+    }
+
+    @Test
+    void parseChangeFertilizingCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ЗмінитиУдобрювання"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.COMMA_SEPARATOR, ","),
+                new Token(TokenType.INTEGER_NUMBER, "5"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ЗмінитиУдобрювання: 7, 5;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        ChangeFertilizing changeFertilizing = (ChangeFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, changeFertilizing.getZones());
+        Assertions.assertEquals(5, changeFertilizing.getFertilizerVolume());
+    }
+
+    @Test
+    void parseStopFertilizingCommand() throws ParseException {
+        List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ЗупинитиУдобрювання"),
+                new Token(TokenType.COLON_SEPARATOR, ":"),
+                new Token(TokenType.INTEGER_NUMBER, "7"),
+                new Token(TokenType.SEMICOLON_SEPARATOR, ";"));
+
+        String input = "ЗупинитиУдобрювання: 7;";
+
+        Lexer mockedLexer = mock(Lexer.class);
+        when(mockedLexer.tokenize(input)).thenReturn(tokens);
+
+        TokenParser parser = new TokenParser(mockedLexer);
+        Command command = parser.parse(input).get(0);
+        StopFertilizing stopFertilizing = (StopFertilizing) command;
+
+        Assertions.assertArrayEquals(new int[]{7}, stopFertilizing.getZones());
+    }
+
+    @Test
     void parseEnableWateringCommandWithDecimalDuration() throws ParseException {
         List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПідключитиПолив"),
                 new Token(TokenType.COLON_SEPARATOR, ":"),
@@ -247,7 +437,7 @@ public class TokenParserTest {
     }
 
     @Test
-    void parseMultipleCommands() throws ParseException {
+    void parseShowWateringAndStopWatering() throws ParseException {
         List<Token> tokens = Arrays.asList(new Token(TokenType.STRING, "ПідключитиПолив"),
                 new Token(TokenType.COLON_SEPARATOR, ":"),
                 new Token(TokenType.OPEN_BRACKET, "("),
@@ -303,11 +493,6 @@ public class TokenParserTest {
 
         TokenParser parser = new TokenParser(mockedLexer);
         List<Command> list = parser.parse(input);
-
-        Command first = list.get(0);
-        Assertions.assertTrue(first instanceof EnableWatering);
-        EnableWatering enableWatering = (EnableWatering) first;
-        Assertions.assertArrayEquals(new int[]{7, 8, 9, 10, 12, 15}, enableWatering.getZones());
 
         Command second = list.get(1);
         Assertions.assertTrue(second instanceof ShowWatering);

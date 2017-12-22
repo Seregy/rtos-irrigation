@@ -152,7 +152,7 @@ public class AppTest {
     }
 
     @Test
-    void handleSetSensorPeriodicityCommand() throws ParseException{
+    void handleSetSensorPeriodicity() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -168,7 +168,7 @@ public class AppTest {
     }
 
     @Test
-    void handleShowHumidityCommand() throws ParseException{
+    void handleShowHumidity() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -188,7 +188,7 @@ public class AppTest {
     }
 
     @Test
-    void handleEnableFertilizingCommand() throws ParseException{
+    void handleEnableFertilizing() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -202,7 +202,7 @@ public class AppTest {
     }
 
     @Test
-    void handleShowFertilizingCommand() throws ParseException{
+    void handleShowFertilizing() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -216,7 +216,7 @@ public class AppTest {
     }
 
     @Test
-    void handleChangeFertilizingCommand() throws ParseException{
+    void handleChangeFertilizing() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
@@ -230,7 +230,7 @@ public class AppTest {
     }
 
     @Test
-    void handleStopFertilizingCommand() throws ParseException{
+    void handleStopFertilizing() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 

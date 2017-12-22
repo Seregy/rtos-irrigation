@@ -38,16 +38,16 @@ public class App extends Application{
     }
 
     public App() {
-        this(new ZoneDAOLocal(), new TokenParser(new RegexLexer()));
+        this.zoneDAO = new ZoneDAOLocal();
+        this.parser = new TokenParser(new RegexLexer());
     }
 
-    public App(ZoneDAO zoneDAO, Parser parser) {
+    public App(ZoneDAO zoneDAO, Parser parser, MainWindow mainWindow) {
         this.zoneDAO = zoneDAO;
         this.parser = parser;
+        this.mainWindowController = mainWindow;
 
-        for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
-            zoneDAO.add(new Zone(i));
-        }
+        initZones();
     }
 
     @Override
@@ -64,7 +64,12 @@ public class App extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        initZones();
+    }
+
+    private void initZones() {
         for (int i = 1; i < AMOUNT_OF_ZONES + 1; i++) {
+            zoneDAO.add(new Zone(i));
             setSensorsTimersForZone(zoneDAO.find(i));
         }
     }
@@ -404,10 +409,6 @@ public class App extends Application{
                 stopFertilizing((StopFertilizing) command);
                 break;
         }
-    }
-
-    public void setMainWindowController(MainWindow mainWindowController) {
-        this.mainWindowController = mainWindowController;
     }
 
     public void waterSensorNotResponding() {

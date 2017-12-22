@@ -17,7 +17,7 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-public class AppTest {
+public class AppHandleCommandsTest {
     @Test
     void handleEnableWatering() throws ParseException{
         ZoneDAO mockedDAO = mockZoneDAO();

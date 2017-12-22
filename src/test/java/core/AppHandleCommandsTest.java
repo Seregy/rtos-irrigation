@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class AppHandleCommandsTest {
     @Test
     void handleEnableWatering() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;";
@@ -41,7 +41,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleShowWatering() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 7, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -63,7 +63,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleStopWatering() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 7, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -87,7 +87,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleResumeWatering() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: (7, 8), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -113,7 +113,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWatering() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -138,7 +138,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWatering() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 00:30, 1, 2, 30-40;" +
@@ -164,7 +164,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringInterval() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -191,7 +191,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWaterVolume() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -217,7 +217,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringDuration() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -243,7 +243,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutHumidityRange() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -268,7 +268,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWateringAndWateringInterval() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:01, 1, 2, 30-40;" +
@@ -295,7 +295,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWateringAndWaterVolume() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:01, 1, 2, 30-40;" +
@@ -322,7 +322,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWateringAndWateringDuration() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:01, 1, 2, 30-40;" +
@@ -349,7 +349,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWateringAndHumidityRange() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:01, 1, 2, 30-40;" +
@@ -376,7 +376,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringIntervalAndWaterVolume() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -404,7 +404,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringIntervalAndWateringDuration() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -432,7 +432,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringIntervalAndHumidityRange() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -460,7 +460,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWaterVolumeAndWateringDuration() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -488,7 +488,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWaterVolumeAndHumidityRange() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -514,7 +514,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutFirstWateringWateringIntervalAndWaterVolume() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -543,7 +543,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringIntervalWaterVolumeAndWateringDuration() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -573,7 +573,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeWateringWithoutWateringIntervalWaterVolumeAndHumidityRange() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -602,7 +602,7 @@ public class AppHandleCommandsTest {
     @Test
     void handleChangeWateringWithoutFirstWateringWateringIntervalWaterVolumeAndWateringDuration()
             throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -634,7 +634,7 @@ public class AppHandleCommandsTest {
     @Test
     void handleChangeWateringWithoutParams()
             throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 10, 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -666,7 +666,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleSetSensorPeriodicity() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ЗадатиПеріодичністьДатчиків: 8, 00:03;";
@@ -682,7 +682,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleShowHumidity() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: 1, 2017-11-01 10:10, 00:30, 1, 2, 30-40; ПоказатиРівеньВологості: (1, 2);";
@@ -702,7 +702,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleEnableFertilizing() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиУдобрювання: 1, 5;";
@@ -716,7 +716,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleShowFertilizing() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПоказатиУдобрювання: 1;";
@@ -730,7 +730,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleChangeFertilizing() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ЗмінитиУдобрювання: 1, 12;";
@@ -744,7 +744,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleStopFertilizing() throws ParseException{
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиУдобрювання: 1, 2; ЗупинитиУдобрювання: (1, 2);";
@@ -760,7 +760,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void handleMultipleCommands() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         String input = "ПідключитиПолив: (7-10, 12, 15), 2017-11-01 10:10, 00:30, 1, 2, 30-40;" +
@@ -786,7 +786,7 @@ public class AppHandleCommandsTest {
 
     @Test
     void throwErrorOnParserError() throws ParseException {
-        ZoneDAO mockedDAO = mockZoneDAO();
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
         Parser mockedParser = mock(Parser.class);
 
         when(mockedParser.parse(anyString())).thenThrow(ParseException.class);
@@ -797,23 +797,5 @@ public class AppHandleCommandsTest {
                         "2017-11-01 10:10, 00:30, 1, 2, 30-40;"));
 
         verify(mockedDAO, times(0)).update(any());
-    }
-
-    private ZoneDAO mockZoneDAO() {
-        ZoneDAO mockedDAO = mock(ZoneDAO.class);
-        List<Zone> zones = new ArrayList<>();
-
-        when(mockedDAO.find(anyInt()))
-                .thenAnswer(invocation -> zones.get((int) invocation.getArgument(0) - 1));
-        when(mockedDAO.update(any()))
-                .thenReturn(true);
-        when(mockedDAO.add(any()))
-                .thenAnswer(invocation -> zones.add(invocation.getArgument(0)));
-        when(mockedDAO.delete(anyInt()))
-                .thenAnswer(invocation -> (zones.remove(((int) invocation.getArgument(0)) - 1) != null));
-        when(mockedDAO.findAll())
-                .thenReturn(zones);
-
-        return mockedDAO;
     }
 }

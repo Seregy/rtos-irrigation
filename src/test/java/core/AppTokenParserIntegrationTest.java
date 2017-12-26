@@ -55,6 +55,18 @@ public class AppTokenParserIntegrationTest {
     }
 
     @Test
+    void handleInvalidHumidity() throws Exception {
+        MainWindow mockedWindow = mock(MainWindow.class);
+        ZoneDAO mockedDAO = TestUtils.mockZoneDAO();
+        App app = new App(mockedDAO, new TokenParser(new RegexLexer()), mockedWindow);
+
+        app.handleCommands("ПідключитиПолив: 1, 2017-11-10 16:17, 00:00:15, 1, 0.1, 30-40;");
+        app.invalidHumidity(1);
+
+        Assertions.assertEquals(WateringStatus.DISABLED, mockedDAO.find(1).getWateringStatus());
+    }
+
+    @Test
     void handleWaterShortage() throws Exception {
         MainWindow mockedWindow = mock(MainWindow.class);
         ZoneDAO mockedDAO = TestUtils.mockZoneDAO();

@@ -26,6 +26,15 @@ public class RegexLexerTest {
     }
 
     @Test
+    void tokenizeColonSeparator() throws ParseException {
+        RegexLexer lexer = new RegexLexer();
+
+        List<Token> tokens = lexer.tokenize(":");
+        List<Token> expected = Collections.singletonList(new Token(TokenType.COLON_SEPARATOR, ":"));
+        Assertions.assertEquals(expected, tokens);
+    }
+
+    @Test
     void throwErrorOnUnknownSymbol() throws Exception {
         RegexLexer lexer = new RegexLexer();
         Assertions.assertThrows(ParseException.class, () -> {
